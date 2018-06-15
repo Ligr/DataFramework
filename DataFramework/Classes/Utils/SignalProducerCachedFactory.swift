@@ -1,6 +1,6 @@
 //
 //  SignalProducerCachedFactory.swift
-//  DataKit
+//  DataFramework
 //
 //  Created by Alex on 2/14/18.
 //  Copyright © 2018 Alex. All rights reserved.
