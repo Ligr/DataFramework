@@ -1,7 +1,16 @@
 PODS:
-  - DataFramework (0.1.0)
+  - DataFramework (0.1.0):
+    - IGListKit/Diffing (~> 3.0)
+    - ReactiveCocoa (~> 7.0)
+    - ReactiveSwift (~> 3.0)
+  - IGListKit/Diffing (3.4.0)
   - Nimble (7.0.3)
   - Quick (1.2.0)
+  - ReactiveCocoa (7.2.0):
+    - ReactiveSwift (~> 3.1)
+  - ReactiveSwift (3.1.0):
+    - Result (~> 3.2)
+  - Result (3.2.4)
 
 DEPENDENCIES:
   - DataFramework (from `../`)
@@ -10,18 +19,26 @@ DEPENDENCIES:
 
 SPEC REPOS:
   https://github.com/cocoapods/specs.git:
+    - IGListKit
     - Nimble
     - Quick
+    - ReactiveCocoa
+    - ReactiveSwift
+    - Result
 
 EXTERNAL SOURCES:
   DataFramework:
     :path: "../"
 
 SPEC CHECKSUMS:
-  DataFramework: c33738cfbebd61f172f937c60ae1a70aaa8a89b9
+  DataFramework: 9b0d5ee5fde3a4857d70e6184fc4f4502e0184e4
+  IGListKit: 7a5d788e9fb746bcd402baa8e8b24bc3bd2a5a07
   Nimble: 7f5a9c447a33002645a071bddafbfb24ea70e0ac
   Quick: 58d203b1c5e27fff7229c4c1ae445ad7069a7a08
+  ReactiveCocoa: 476dae7ca790f40d30d186a1bd7ebae4290395d5
+  ReactiveSwift: 5b26d2e988fe0eed2daf48c4054d1de74db50184
+  Result: d2d07204ce72856f1fd9130bbe42c35a7b0fea10
 
-PODFILE CHECKSUM: 6bacf7dcc7ced4451d7757275e1dec8fe9b19dab
+PODFILE CHECKSUM: 68e7735084212401b222c60edebc6c51906592e6
 
 COCOAPODS: 1.5.3

@@ -1,9 +1,9 @@
 {
   "name": "DataFramework",
   "version": "0.1.0",
-  "summary": "A short description of DataFramework.",
-  "description": "TODO: Add long description of the pod here.",
-  "homepage": "https://github.com/Aliaksandr Huryn/DataFramework",
+  "summary": "Utilities that help to load, parse and display data",
+  "description": "Utilities that help to load, parse and display data",
+  "homepage": "https://github.com/Ligr/DataFramework",
   "license": {
     "type": "MIT",
     "file": "LICENSE"
@@ -12,11 +12,22 @@
     "Aliaksandr Huryn": "aliaksandr.huryn@gmail.com"
   },
   "source": {
-    "git": "https://github.com/Aliaksandr Huryn/DataFramework.git",
+    "git": "https://github.com/Ligr/DataFramework",
     "tag": "0.1.0"
   },
   "platforms": {
-    "ios": "8.0"
+    "ios": "10.0"
   },
-  "source_files": "DataFramework/Classes/**/*"
+  "source_files": "DataFramework/Classes/**/*",
+  "dependencies": {
+    "ReactiveCocoa": [
+      "~> 7.0"
+    ],
+    "ReactiveSwift": [
+      "~> 3.0"
+    ],
+    "IGListKit/Diffing": [
+      "~> 3.0"
+    ]
+  }
 }
