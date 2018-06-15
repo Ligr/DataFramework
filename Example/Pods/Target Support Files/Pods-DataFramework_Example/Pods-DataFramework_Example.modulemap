@@ -1,0 +1,6 @@
+framework module Pods_DataFramework_Example {
+  umbrella header "Pods-DataFramework_Example-umbrella.h"
+
+  export *
+  module * { export * }
+}

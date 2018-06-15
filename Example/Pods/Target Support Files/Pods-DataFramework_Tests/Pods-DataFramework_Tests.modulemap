@@ -1,0 +1,6 @@
+framework module Pods_DataFramework_Tests {
+  umbrella header "Pods-DataFramework_Tests-umbrella.h"
+
+  export *
+  module * { export * }
+}

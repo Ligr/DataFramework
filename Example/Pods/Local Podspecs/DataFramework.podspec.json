@@ -1,0 +1,22 @@
+{
+  "name": "DataFramework",
+  "version": "0.1.0",
+  "summary": "A short description of DataFramework.",
+  "description": "TODO: Add long description of the pod here.",
+  "homepage": "https://github.com/Aliaksandr Huryn/DataFramework",
+  "license": {
+    "type": "MIT",
+    "file": "LICENSE"
+  },
+  "authors": {
+    "Aliaksandr Huryn": "aliaksandr.huryn@gmail.com"
+  },
+  "source": {
+    "git": "https://github.com/Aliaksandr Huryn/DataFramework.git",
+    "tag": "0.1.0"
+  },
+  "platforms": {
+    "ios": "8.0"
+  },
+  "source_files": "DataFramework/Classes/**/*"
+}

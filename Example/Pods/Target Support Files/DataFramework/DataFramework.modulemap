@@ -1,0 +1,6 @@
+framework module DataFramework {
+  umbrella header "DataFramework-umbrella.h"
+
+  export *
+  module * { export * }
+}
