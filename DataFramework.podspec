@@ -25,7 +25,7 @@ Utilities that help to load, parse and display data
   # s.screenshots     = 'www.example.com/screenshots_1', 'www.example.com/screenshots_2'
   s.license          = { :type => 'MIT', :file => 'LICENSE' }
   s.author           = { 'Aliaksandr Huryn' => 'aliaksandr.huryn@gmail.com' }
-  s.source           = { :git => 'https://github.com/Ligr/DataFramework', :tag => s.version.to_s }
+  s.source           = { :git => 'https://github.com/Ligr/DataFramework.git', :tag => s.version.to_s }
   # s.social_media_url = 'https://twitter.com/<TWITTER_USERNAME>'
 
   s.ios.deployment_target = '10.0'
