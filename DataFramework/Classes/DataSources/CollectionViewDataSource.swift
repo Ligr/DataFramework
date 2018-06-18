@@ -38,7 +38,7 @@ private class CollectionViewDataSource_DataView<T>: NSObject, UICollectionViewDa
         collectionView.dataSource = self
         collectionView.reloadData()
 
-        updatesDisposable = data.updates.observeValues { [weak self] updates in
+        updatesDisposable = data.updates.observe(on: UIScheduler()).observeValues { [weak self] updates in
             guard let strongSelf = self, let collectionView = strongSelf.collectionView else {
                 return
             }

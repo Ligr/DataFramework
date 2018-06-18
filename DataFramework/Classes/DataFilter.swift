@@ -23,7 +23,7 @@ public protocol HttpDataFilterProtocol: DataFilterProtocol {
 
     var method: HttpMethod { get }
     var path: String { get }
-    var requestParams: [String: String] { get }
+    var requestParams: [String: String] { get set }
     var headerParams: [String: String] { get set }
     var body: Data? { get }
 
@@ -33,7 +33,7 @@ open class HttpDataFilter: HttpDataFilterProtocol {
 
     public let method: HttpMethod
     public let path: String
-    public let requestParams: [String: String]
+    public var requestParams: [String: String]
     public var headerParams: [String: String]
     public let body: Data?
     

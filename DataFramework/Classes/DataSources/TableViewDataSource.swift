@@ -35,7 +35,7 @@ private class TableViewDataSource_DataView<T>: NSObject, UITableViewDataSource {
         tableView.dataSource = self
         tableView.reloadData()
 
-        updatesDisposable = data.updates.observe(on: QueueScheduler.main).observeValues { [weak self] updates in
+        updatesDisposable = data.updates.observe(on: UIScheduler()).observeValues { [weak self] updates in
             guard let strongSelf = self, let tableView = strongSelf.tableView else {
                 return
             }
