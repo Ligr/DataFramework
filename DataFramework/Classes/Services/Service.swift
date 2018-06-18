@@ -9,7 +9,7 @@
 import Foundation
 import ReactiveSwift
 
-enum ServiceError: Error {
+public enum ServiceError: Error {
     case unknown
     case requestFailed(Error?)
     case invalidJson(Error?)
@@ -17,7 +17,7 @@ enum ServiceError: Error {
     case authorizationFailed(Error?)
 }
 
-protocol ServiceProtocol {
+public protocol ServiceProtocol {
 
     associatedtype FilterType: DataFilterProtocol
     associatedtype ResultType

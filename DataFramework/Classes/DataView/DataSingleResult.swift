@@ -10,7 +10,7 @@ import Foundation
 import ReactiveSwift
 import Result
 
-protocol DataSingleResultType {
+public protocol DataSingleResultType {
 
     associatedtype ItemType
 
@@ -20,12 +20,12 @@ protocol DataSingleResultType {
 
 }
 
-class DataSingleResult<T>: DataSingleResultType {
+public class DataSingleResult<T>: DataSingleResultType {
 
-    let item: Property<T?>
-    let state: Property<DataState>
+    public let item: Property<T?>
+    public let state: Property<DataState>
 
-    private(set) lazy var isLoading: Property<Bool> = {
+    public private(set) lazy var isLoading: Property<Bool> = {
         return state.map { $0 == .loading }
     }()
 
@@ -37,7 +37,7 @@ class DataSingleResult<T>: DataSingleResultType {
         state = Property(_state)
     }
 
-    static func create<E: Error>(data: SignalProducer<T, E>) -> DataSingleResult<T> {
+    public static func create<E: Error>(data: SignalProducer<T, E>) -> DataSingleResult<T> {
         return DataSingleResult_SignalProducer(data: data)
     }
 

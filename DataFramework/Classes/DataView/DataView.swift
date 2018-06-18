@@ -11,7 +11,7 @@ import ReactiveSwift
 import ReactiveCocoa
 import Result
 
-protocol DataViewProtocol {
+public protocol DataViewProtocol {
 
     associatedtype ItemType
 
@@ -26,10 +26,12 @@ protocol DataViewProtocol {
     func numberOfItemsInSection(_ section: Int) -> Int
 
     func loadMore()
+    func map<U>(_ mapAction: @escaping (ItemType) -> U) -> DataView<U>
 
     var selectedItems: Property<[IndexPath]> { get }
     var allowsMultipleSelection: Bool { get }
     func selectItem(at index: IndexPath)
+    func selectItems(at indexes: [IndexPath])
     func deselectItem(at index: IndexPath)
     func resetSelection()
 
@@ -38,15 +40,15 @@ protocol DataViewProtocol {
 
 }
 
-class DataView<T>: DataViewProtocol {
+public class DataView<T>: DataViewProtocol {
 
-    var state: Property<DataState> { fatalError() }
-    private(set) lazy var isEmptyAndLoading: Property<Bool> = {
+    public var state: Property<DataState> { fatalError() }
+    public private(set) lazy var isEmptyAndLoading: Property<Bool> = {
         return state.map { [weak self] in
             $0 == .loading && self?.count == 0
         }.skipRepeats()
     }()
-    private(set) lazy var isEmpty: Property<Bool> = {
+    public private(set) lazy var isEmpty: Property<Bool> = {
         let isEmpty = updates.map { [weak self] _ -> Bool in
             guard let strongSelf = self else {
                 return true
@@ -55,34 +57,34 @@ class DataView<T>: DataViewProtocol {
         }
         return Property(initial: count == 0, then: isEmpty)
     }()
-    private(set) lazy var isLoading: Property<Bool> = {
+    public private(set) lazy var isLoading: Property<Bool> = {
         return state.map { $0 == .loading }
     }()
-    var updates: Signal<[DataUpdate], NoError> { fatalError() }
-    var count: Int { fatalError() }
+    public var updates: Signal<[DataUpdate], NoError> { fatalError() }
+    public var count: Int { fatalError() }
 
-    var numberOfSections: Int { fatalError() }
-    func numberOfItemsInSection(_ section: Int) -> Int { fatalError() }
+    public var numberOfSections: Int { fatalError() }
+    public func numberOfItemsInSection(_ section: Int) -> Int { fatalError() }
 
-    func loadMore() { fatalError() }
+    public func loadMore() { fatalError() }
 
-    subscript(_ index: Int) -> T { fatalError() }
-    subscript(_ index: IndexPath) -> T { fatalError() }
+    public subscript(_ index: Int) -> T { fatalError() }
+    public subscript(_ index: IndexPath) -> T { fatalError() }
 
-    func map<U>(_ mapAction: @escaping (T) -> U) -> DataView<U> {
+    public func map<U>(_ mapAction: @escaping (T) -> U) -> DataView<U> {
         return DataView_Map(map: mapAction, dataView: self)
     }
 
-    private(set) lazy var selectedItems: Property<[IndexPath]> = {
+    public private(set) lazy var selectedItems: Property<[IndexPath]> = {
         updates.take(duringLifetimeOf: self).observeValues { [weak self] updates in
             self?.resetSelection() // TODO: update selection based on new position of objects
         }
         return Property(_selectedItems)
     }()
     private let _selectedItems: MutableProperty<[IndexPath]> = MutableProperty([])
-    var allowsMultipleSelection: Bool = false
+    public var allowsMultipleSelection: Bool = false
 
-    func selectItem(at index: IndexPath) {
+    public func selectItem(at index: IndexPath) {
         guard _selectedItems.value.contains(index) == false else {
             return
         }
@@ -93,21 +95,39 @@ class DataView<T>: DataViewProtocol {
         }
     }
 
-    func deselectItem(at index: IndexPath) {
+    public func selectItems(at indexes: [IndexPath]) {
+        let existingIndexes = _selectedItems.value
+        let newIndexes = indexes.filter {
+            existingIndexes.contains($0) == false
+        }
+        guard newIndexes.count > 0 else {
+            return
+        }
+        guard allowsMultipleSelection || newIndexes.count == 1 else {
+            return
+        }
+        if allowsMultipleSelection {
+            _selectedItems.value.append(contentsOf: newIndexes)
+        } else {
+            _selectedItems.value = newIndexes
+        }
+    }
+
+    public func deselectItem(at index: IndexPath) {
         guard _selectedItems.value.contains(index) == true else {
             return
         }
         _selectedItems.value.remove(index)
     }
 
-    func resetSelection() {
+    public func resetSelection() {
         guard _selectedItems.value.count > 0 else {
             return
         }
         _selectedItems.value = []
     }
 
-    static func create(data: DataResult<T>) -> DataView<T> {
+    public static func create(data: DataResult<T>) -> DataView<T> {
         return DataView_Result(result: data)
     }
 

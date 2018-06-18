@@ -9,7 +9,7 @@
 import Foundation
 import ReactiveSwift
 
-final class SignalProducerCachedFactory<Filter: DataFilterProtocol, Output, E: Error> {
+public final class SignalProducerCachedFactory<Filter: DataFilterProtocol, Output, E: Error> {
 
     private let factory: (Filter) -> SignalProducer<Output, E>
     private var cache: [String: SignalProducer<Output, E>] = [:]

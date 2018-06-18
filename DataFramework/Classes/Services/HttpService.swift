@@ -28,14 +28,14 @@ enum HTTP {
 
 }
 
-struct HttpResponse<T> {
-    let data: T
-    let response: URLResponse
+public struct HttpResponse<T> {
+    public let data: T
+    public let response: URLResponse
 }
 
-final class HttpService<FilterType: HttpDataFilterProtocol>: ServiceProtocol {
+public final class HttpService<FilterType: HttpDataFilterProtocol>: ServiceProtocol {
 
-    typealias ResultType = HttpResponse<Data>
+    public typealias ResultType = HttpResponse<Data>
 
     private let baseUrl: URL
     private let urlSession: URLSession
@@ -52,13 +52,13 @@ final class HttpService<FilterType: HttpDataFilterProtocol>: ServiceProtocol {
         self.init(baseUrl: url)
     }
 
-    init(baseUrl: URL) {
+    public init(baseUrl: URL) {
         self.baseUrl = baseUrl
         let urlSessionConfig = URLSessionConfiguration.default
         self.urlSession = URLSession(configuration: urlSessionConfig)
     }
 
-    func request(filter: FilterType) -> SignalProducer<ResultType, ServiceError> {
+    public func request(filter: FilterType) -> SignalProducer<ResultType, ServiceError> {
         return requestFactory.producer(for: filter)
     }
 

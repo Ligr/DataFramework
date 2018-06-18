@@ -9,9 +9,9 @@
 import Foundation
 import ReactiveSwift
 
-final class HttpJsonService<FilterType: HttpDataFilterProtocol>: ServiceProtocol {
+public final class HttpJsonService<FilterType: HttpDataFilterProtocol>: ServiceProtocol {
 
-    typealias ResultType = HttpResponse<Any>
+    public typealias ResultType = HttpResponse<Any>
 
     private let httpService: HttpService<FilterType>
 
@@ -22,11 +22,11 @@ final class HttpJsonService<FilterType: HttpDataFilterProtocol>: ServiceProtocol
         self.init(baseUrl: url)
     }
 
-    init(baseUrl: URL) {
+    public init(baseUrl: URL) {
         self.httpService = HttpService(baseUrl: baseUrl)
     }
 
-    func request(filter: FilterType) -> SignalProducer<ResultType, ServiceError> {
+    public func request(filter: FilterType) -> SignalProducer<ResultType, ServiceError> {
         var jsonFilter = filter
         jsonFilter.headerParams[HTTP.HeaderKey.accept] = HTTP.Accept.json
         return httpService.request(filter: jsonFilter).flatMap(.latest) { (result) -> SignalProducer<ResultType, ServiceError> in

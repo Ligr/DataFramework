@@ -14,13 +14,13 @@ public protocol Uniq {
     var identifier: String { get }
 }
 
-enum DataState: Equatable {
+public enum DataState: Equatable {
     case none
     case idle
     case loading
     case error(Error)
 
-    static func == (lhs: DataState, rhs: DataState) -> Bool {
+    public static func == (lhs: DataState, rhs: DataState) -> Bool {
         switch (lhs, rhs) {
         case (.none, .none),
              (.idle, .idle),
@@ -46,7 +46,7 @@ enum DataState: Equatable {
 
 }
 
-enum DataUpdate: Equatable {
+public enum DataUpdate: Equatable {
     case all
     case insert(at: IndexPath)
     case delete(at: IndexPath)
@@ -54,7 +54,7 @@ enum DataUpdate: Equatable {
     case move(from: IndexPath, to: IndexPath)
 }
 
-protocol DataResultType {
+public protocol DataResultType {
 
     associatedtype ItemType
 
@@ -67,25 +67,26 @@ protocol DataResultType {
     func numberOfItemsInSection(_ section: Int) -> Int
 
     func loadMore()
+    func map<U>(_ mapAction: @escaping (ItemType) -> U) -> DataResult<U>
 
     subscript(_ index: Int) -> ItemType { get }
     subscript(_ index: IndexPath) -> ItemType { get }
 
 }
 
-open class DataResult<T>: DataResultType {
+public class DataResult<T>: DataResultType {
 
-    let state: Property<DataState>
-    let updates: Signal<[DataUpdate], NoError>
-    var count: Int { fatalError() }
+    public let state: Property<DataState>
+    public let updates: Signal<[DataUpdate], NoError>
+    public var count: Int { fatalError() }
 
-    var numberOfSections: Int { fatalError() }
-    func numberOfItemsInSection(_ section: Int) -> Int { fatalError() }
+    public var numberOfSections: Int { fatalError() }
+    public func numberOfItemsInSection(_ section: Int) -> Int { fatalError() }
 
-    func loadMore() { fatalError() }
+    public func loadMore() { fatalError() }
 
-    subscript(_ index: Int) -> T { fatalError() }
-    subscript(_ index: IndexPath) -> T { fatalError() }
+    public subscript(_ index: Int) -> T { fatalError() }
+    public subscript(_ index: IndexPath) -> T { fatalError() }
 
     fileprivate let _state: MutableProperty<DataState> = MutableProperty(.none)
     fileprivate let updatesObserver: Signal<[DataUpdate], NoError>.Observer
@@ -97,21 +98,21 @@ open class DataResult<T>: DataResultType {
         state = Property(_state.skipRepeats())
     }
 
-    static func create(data: [T]) -> DataResult<T> {
+    public static func create(data: [T]) -> DataResult<T> {
         return DataResult_Array(data: data)
     }
 
-    func map<U>(_ mapAction: @escaping (T) -> U) -> DataResult<U> {
+    public func map<U>(_ mapAction: @escaping (T) -> U) -> DataResult<U> {
         return DataResult_Map(map: mapAction, dataResult: self)
     }
 
-    static var empty: DataResult<T> {
+    public static var empty: DataResult<T> {
         return create(data: [])
     }
 
 }
 
-extension DataResult where T: Uniq & Equatable {
+public extension DataResult where T: Uniq & Equatable {
 
     static func create<E: Error>(data: SignalProducer<[T], E>) -> DataResult<T> {
         return DataResult_SignalProducer(data: data)

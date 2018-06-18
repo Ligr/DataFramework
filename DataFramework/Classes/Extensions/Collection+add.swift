@@ -8,11 +8,11 @@
 
 import Foundation
 
-func += <T> (lhs: inout Array<T>, rhs: T) {
+public func += <T> (lhs: inout Array<T>, rhs: T) {
     lhs.append(rhs)
 }
 
-extension Array where Element: Equatable {
+public extension Array where Element: Equatable {
 
     @discardableResult
     mutating func remove(_ element: Element) -> Element? {

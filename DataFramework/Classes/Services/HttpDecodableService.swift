@@ -10,15 +10,15 @@ import Foundation
 import ReactiveSwift
 import Result
 
-protocol DecodableDataFilterProtocol {
+public protocol DecodableDataFilterProtocol {
 
     associatedtype DecodableType: Decodable
 
 }
 
-final class HttpDecodableService<FilterType: HttpDataFilterProtocol & DecodableDataFilterProtocol>: ServiceProtocol {
+public final class HttpDecodableService<FilterType: HttpDataFilterProtocol & DecodableDataFilterProtocol>: ServiceProtocol {
 
-    typealias ResultType = HttpResponse<FilterType.DecodableType>
+    public typealias ResultType = HttpResponse<FilterType.DecodableType>
 
     private let httpService: HttpService<FilterType>
 
@@ -29,11 +29,11 @@ final class HttpDecodableService<FilterType: HttpDataFilterProtocol & DecodableD
         self.init(baseUrl: url)
     }
 
-    init(baseUrl: URL) {
+    public init(baseUrl: URL) {
         self.httpService = HttpService(baseUrl: baseUrl)
     }
 
-    func request(filter: FilterType) -> SignalProducer<ResultType, ServiceError> {
+    public func request(filter: FilterType) -> SignalProducer<ResultType, ServiceError> {
         var jsonFilter = filter
         jsonFilter.headerParams[HTTP.HeaderKey.accept] = HTTP.Accept.json
         return httpService.request(filter: jsonFilter).flatMap(.latest) { (result) -> SignalProducer<ResultType, ServiceError> in

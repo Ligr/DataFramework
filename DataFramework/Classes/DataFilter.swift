@@ -8,18 +8,18 @@
 
 import Foundation
 
-protocol DataFilterProtocol {
+public protocol DataFilterProtocol {
     
     var identifier: String { get }
     
 }
 
-enum HttpMethod: String {
+public enum HttpMethod: String {
     case get = "GET"
     case post = "POST"
 }
 
-protocol HttpDataFilterProtocol: DataFilterProtocol {
+public protocol HttpDataFilterProtocol: DataFilterProtocol {
 
     var method: HttpMethod { get }
     var path: String { get }
@@ -29,15 +29,15 @@ protocol HttpDataFilterProtocol: DataFilterProtocol {
 
 }
 
-class HttpDataFilter: HttpDataFilterProtocol {
+open class HttpDataFilter: HttpDataFilterProtocol {
 
-    let method: HttpMethod
-    let path: String
-    let requestParams: [String: String]
-    var headerParams: [String: String]
-    let body: Data?
+    public let method: HttpMethod
+    public let path: String
+    public let requestParams: [String: String]
+    public var headerParams: [String: String]
+    public let body: Data?
     
-    init(path: String, method: HttpMethod = .get, requestParams: [String: String] = [:], headerParams: [String: String] = [:], body: Data? = nil) {
+    public init(path: String, method: HttpMethod = .get, requestParams: [String: String] = [:], headerParams: [String: String] = [:], body: Data? = nil) {
         self.path = path
         self.method = method
         self.requestParams = requestParams
@@ -45,7 +45,7 @@ class HttpDataFilter: HttpDataFilterProtocol {
         self.body = body
     }
 
-    var identifier: String {
+    public var identifier: String {
         var fullString = path + "|" + method.rawValue + "|"
         fullString += requestParams.map { $0.0 + $0.1 }.joined()
         fullString += headerParams.map { $0.0 + $0.1 }.joined()
