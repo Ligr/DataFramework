@@ -55,8 +55,8 @@ private class DataSingleResult_SignalProducer<T, E: Error>: DataSingleResult<T> 
             case .failure(let error):
                 self?._state.value = .error(error)
             case .success(let value):
-                self?._item.value = value
                 self?._state.value = .idle
+                self?._item.value = value
             }
         }
     }

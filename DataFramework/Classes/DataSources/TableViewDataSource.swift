@@ -13,6 +13,10 @@ public enum TableViewDataSource {
 
     public typealias CellFactory<T> = (UITableView, IndexPath, T) -> UITableViewCell
 
+    public static var empty: UITableViewDataSource {
+        return TableViewDataSource_Empty.instance
+    }
+
     public static func create<T>(data: DataView<T>, tableView: UITableView, cell: @escaping CellFactory<T>) -> UITableViewDataSource {
         return TableViewDataSource_DataView(data: data, tableView: tableView, cell: cell)
     }

@@ -14,6 +14,10 @@ public enum CollectionViewDataSource {
     public typealias CellFactory<T> = (UICollectionView, IndexPath, T) -> UICollectionViewCell
     public typealias SupplementaryElementFactory = (UICollectionView, IndexPath, String) -> UICollectionReusableView
 
+    public static var empty: UICollectionViewDataSource {
+        return CollectionViewDataSource_Empty.instance
+    }
+
     public static func create<T>(data: DataView<T>, collectionView: UICollectionView, supplementaryElement: SupplementaryElementFactory? = nil, cell: @escaping CellFactory<T>) -> UICollectionViewDataSource {
         return CollectionViewDataSource_DataView(data: data, collectionView: collectionView, supplementaryElement: supplementaryElement, cell: cell)
     }
