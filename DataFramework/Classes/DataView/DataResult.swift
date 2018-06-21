@@ -254,7 +254,7 @@ private final class DataResult_PagingSignalProducer<T: Uniq & Equatable, E: Erro
     private var data: [T] = []
     private var dataDisposable: Disposable?
     private var loadData: ((page: Int, pageSize: Int)) -> SignalProducer<[T], E>
-    private var page: Int = 0
+    private var page: Int = 1
     private let pageSize: Int
     private var finished = false
 
