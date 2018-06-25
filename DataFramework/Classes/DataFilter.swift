@@ -45,6 +45,24 @@ open class HttpDataFilter: HttpDataFilterProtocol {
         self.body = body
     }
 
+    public convenience init<T: Encodable>(path: String, method: HttpMethod = .get, requestParams: [String: String] = [:], headerParams: [String: String] = [:], json: T) {
+        let jsonEncoder = JSONEncoder()
+        let data = try? jsonEncoder.encode(json)
+        var headerParams = headerParams
+        headerParams[HTTP.HeaderKey.contentType] = HTTP.ContentType.json
+        self.init(path: path, method: method, requestParams: requestParams, headerParams: headerParams, body: data)
+    }
+
+    public convenience init(path: String, method: HttpMethod = .get, requestParams: [String: String] = [:], headerParams: [String: String] = [:], form: [String: String]) {
+        var data: Data?
+        var headerParams = headerParams
+        if let query = UrlUtils.urlQuery(with: form) {
+            headerParams[HTTP.HeaderKey.contentType] = HTTP.ContentType.formUrlencoded
+            data = query.data(using: .utf8)
+        }
+        self.init(path: path, method: method, requestParams: requestParams, headerParams: headerParams, body: data)
+    }
+
     public var identifier: String {
         var fullString = path + "|" + method.rawValue + "|"
         fullString += requestParams.map { $0.0 + $0.1 }.joined()

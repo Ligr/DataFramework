@@ -76,9 +76,14 @@ private extension HttpService {
                 return
             }
             let task = strongSelf.urlSession.dataTask(with: request) { data, response, error in
-                if let data = data, let response = response {
-                    observer.send(value: HttpResponse(data: data, response: response))
-                    observer.sendCompleted()
+                if let data = data, let response = response as? HTTPURLResponse {
+                    switch response.statusCode {
+                    case 200..<300:
+                        observer.send(value: HttpResponse(data: data, response: response))
+                        observer.sendCompleted()
+                    default:
+                        observer.send(error: .statusCodeInvalid(data, response))
+                    }
                 } else {
                     observer.send(error: .requestFailed(error))
                 }
@@ -90,22 +95,15 @@ private extension HttpService {
 
     func urlRequest(for filter: FilterType) -> URLRequest {
         let url = self.url(for: filter)
-        var headerParams = filter.headerParams
-
         var request = URLRequest(url: url)
         switch filter.method {
         case .get:
             request.httpMethod = "GET"
         case .post:
-            if let query = urlQuery(for: filter) {
-                headerParams[HTTP.HeaderKey.contentType] = HTTP.ContentType.formUrlencoded
-                request.httpBody = query.data(using: .utf8)
-            } else {
-                request.httpBody = filter.body
-            }
+            request.httpBody = filter.body
             request.httpMethod = "POST"
         }
-        for (headerKey, headerValue) in headerParams {
+        for (headerKey, headerValue) in filter.headerParams {
             request.setValue(headerValue, forHTTPHeaderField: headerKey)
         }
         return request
@@ -113,30 +111,15 @@ private extension HttpService {
 
     func url(for filter: FilterType) -> URL {
         var url = baseUrl.appendingPathComponent(filter.path)
-        switch filter.method {
-        case .get:
-            if let query = urlQuery(for: filter), var urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: false) {
-                urlComponents.query = query
-                url = urlComponents.url ?? url
-            }
-        case .post:
-            break
+        if let query = urlQuery(for: filter), var urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: false) {
+            urlComponents.query = query
+            url = urlComponents.url ?? url
         }
         return url
     }
 
     func urlQuery(for filter: FilterType) -> String? {
-        let params = filter.requestParams.map({
-            if $0.value.isEmpty {
-                return $0.key
-            } else {
-                return $0.key + "=" + $0.value
-            }
-        }).joined(separator: "&")
-        if params.count > 0 {
-            return params
-        }
-        return nil
+        return UrlUtils.urlQuery(with: filter.requestParams)
     }
 
 }
