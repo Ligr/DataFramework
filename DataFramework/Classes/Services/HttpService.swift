@@ -102,6 +102,9 @@ private extension HttpService {
         case .post:
             request.httpBody = filter.body
             request.httpMethod = "POST"
+        case .put:
+            request.httpBody = filter.body
+            request.httpMethod = "PUT"
         }
         for (headerKey, headerValue) in filter.headerParams {
             request.setValue(headerValue, forHTTPHeaderField: headerKey)
