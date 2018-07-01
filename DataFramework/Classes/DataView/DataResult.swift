@@ -66,6 +66,7 @@ public protocol DataResultType {
     var numberOfSections: Int { get }
     func numberOfItemsInSection(_ section: Int) -> Int
 
+    func reload()
     func loadMore()
     func map<U>(_ mapAction: @escaping (ItemType) -> U) -> DataResult<U>
 
@@ -83,6 +84,7 @@ public class DataResult<T>: DataResultType {
     public var numberOfSections: Int { fatalError() }
     public func numberOfItemsInSection(_ section: Int) -> Int { fatalError() }
 
+    public func reload() { fatalError() }
     public func loadMore() { fatalError() }
 
     public subscript(_ index: Int) -> T { fatalError() }
@@ -145,6 +147,7 @@ private class DataResult_Map<T, U>: DataResult<U> {
     override var numberOfSections: Int { return dataResult.numberOfSections }
     override func numberOfItemsInSection(_ section: Int) -> Int { return dataResult.numberOfItemsInSection(section) }
 
+    override func reload() { dataResult.reload() }
     override func loadMore() { dataResult.loadMore() }
 
     override subscript(_ index: Int) -> U {
@@ -181,6 +184,10 @@ private final class DataResult_Array<T>: DataResult<T> {
         return data.count
     }
 
+    override func reload() {
+        // do nothing
+    }
+
     override func loadMore() {
         // do nothing
     }
@@ -199,24 +206,13 @@ private final class DataResult_SignalProducer<T: Uniq & Equatable, E: Error>: Da
 
     private var data: [T] = []
     private var dataDisposable: Disposable?
+    private let dataProducer: SignalProducer<[T], E>
 
     init(data: SignalProducer<[T], E>) {
+        self.dataProducer = data
         super.init()
 
-        self._state.value = .loading
-        dataDisposable = data.startWithResult { [unowned self] result in
-            switch result {
-            case .failure(let error):
-                self._state.value = .error(error)
-            case .success(let items):
-                let updates = DataUpdatesCalculator.calculate(old: self.data, new: items)
-                self.data = items
-                self._state.value = .idle
-                if updates.count > 0 {
-                    self.updatesObserver.send(value: updates)
-                }
-            }
-        }
+        reload()
     }
 
     deinit {
@@ -233,6 +229,28 @@ private final class DataResult_SignalProducer<T: Uniq & Equatable, E: Error>: Da
 
     override func numberOfItemsInSection(_ section: Int) -> Int {
         return data.count
+    }
+
+    override func reload() {
+        dataDisposable?.dispose()
+        self._state.value = .loading
+        if data.isEmpty == false {
+            data = []
+            updatesObserver.send(value: [.all])
+        }
+        dataDisposable = dataProducer.startWithResult { [unowned self] result in
+            switch result {
+            case .failure(let error):
+                self._state.value = .error(error)
+            case .success(let items):
+                let updates = DataUpdatesCalculator.calculate(old: self.data, new: items)
+                self.data = items
+                self._state.value = .idle
+                if updates.count > 0 {
+                    self.updatesObserver.send(value: updates)
+                }
+            }
+        }
     }
 
     override func loadMore() {
@@ -263,6 +281,19 @@ private final class DataResult_PagingSignalProducer<T: Uniq & Equatable, E: Erro
         self.pageSize = pageSize
         super.init()
 
+        reload()
+    }
+
+    override func reload() {
+        dataDisposable?.dispose()
+        if data.isEmpty == false {
+            data = []
+            updatesObserver.send(value: [.all])
+        }
+        finished = false
+        _state.value = .none
+        page = 1
+        
         loadMore()
     }
 
