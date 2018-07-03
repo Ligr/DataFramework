@@ -243,9 +243,9 @@ private final class DataResult_SignalProducer<T: Uniq & Equatable, E: Error>: Da
             case .failure(let error):
                 self._state.value = .error(error)
             case .success(let items):
+                self._state.value = .idle
                 let updates = DataUpdatesCalculator.calculate(old: self.data, new: items)
                 self.data = items
-                self._state.value = .idle
                 if updates.count > 0 {
                     self.updatesObserver.send(value: updates)
                 }
@@ -309,12 +309,12 @@ private final class DataResult_PagingSignalProducer<T: Uniq & Equatable, E: Erro
             case .failure(let error):
                 self._state.value = .error(error)
             case .success(let items):
+                self._state.value = .idle
                 self.page += 1
                 self.finished = items.count != self.pageSize
                 let newItems = self.data + items
                 let updates = DataUpdatesCalculator.calculate(old: self.data, new: newItems)
                 self.data = newItems
-                self._state.value = .idle
                 if updates.count > 0 {
                     self.updatesObserver.send(value: updates)
                 }
