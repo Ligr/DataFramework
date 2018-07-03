@@ -78,7 +78,8 @@ private class CollectionViewDataSource_DataView<T>: NSObject, UICollectionViewDa
     }
 
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return data.numberOfItemsInSection(section)
+        let number = data.numberOfItemsInSection(section)
+        return number
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
