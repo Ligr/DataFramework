@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct UrlUtils {
+public struct UrlUtils {
 
     static func urlQuery(with params: [String: String]) -> String? {
         let params = params.map({

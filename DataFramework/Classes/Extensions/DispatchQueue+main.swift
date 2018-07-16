@@ -7,7 +7,7 @@
 
 import Foundation
 
-extension DispatchQueue {
+public extension DispatchQueue {
 
     static func doOnMain(_ work: @escaping () -> Void) {
         guard Thread.isMainThread == false else {
