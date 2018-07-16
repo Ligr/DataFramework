@@ -15,6 +15,8 @@
 		607FACE01AFB9204008FA782 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 607FACDE1AFB9204008FA782 /* LaunchScreen.xib */; };
 		607FACEC1AFB9204008FA782 /* Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACEB1AFB9204008FA782 /* Tests.swift */; };
 		700E703104C8B3EDBDA671EE /* Pods_DataFramework_Example.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 97DDD1CBE20098114D17B825 /* Pods_DataFramework_Example.framework */; };
+		FA61B7A820FC94E600157A6B /* TestWebServiceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA61B7A620FC94E600157A6B /* TestWebServiceView.swift */; };
+		FA61B7A920FC94E600157A6B /* TestWebServiceView.xib in Resources */ = {isa = PBXBuildFile; fileRef = FA61B7A720FC94E600157A6B /* TestWebServiceView.xib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -47,6 +49,8 @@
 		CD6AFBF267D86C046D7377DB /* Pods-DataFramework_Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DataFramework_Tests.release.xcconfig"; path = "Pods/Target Support Files/Pods-DataFramework_Tests/Pods-DataFramework_Tests.release.xcconfig"; sourceTree = "<group>"; };
 		E5C29B2DB8E639345EF55B32 /* Pods-DataFramework_Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DataFramework_Tests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-DataFramework_Tests/Pods-DataFramework_Tests.debug.xcconfig"; sourceTree = "<group>"; };
 		F5BFAE8BCCE6B77F286CDD88 /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = LICENSE; path = ../LICENSE; sourceTree = "<group>"; };
+		FA61B7A620FC94E600157A6B /* TestWebServiceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestWebServiceView.swift; sourceTree = "<group>"; };
+		FA61B7A720FC94E600157A6B /* TestWebServiceView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = TestWebServiceView.xib; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -104,6 +108,7 @@
 		607FACD21AFB9204008FA782 /* Example for DataFramework */ = {
 			isa = PBXGroup;
 			children = (
+				FA61B7A520FC94CF00157A6B /* TestWebService */,
 				607FACD51AFB9204008FA782 /* AppDelegate.swift */,
 				607FACD71AFB9204008FA782 /* ViewController.swift */,
 				607FACD91AFB9204008FA782 /* Main.storyboard */,
@@ -159,6 +164,15 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		FA61B7A520FC94CF00157A6B /* TestWebService */ = {
+			isa = PBXGroup;
+			children = (
+				FA61B7A620FC94E600157A6B /* TestWebServiceView.swift */,
+				FA61B7A720FC94E600157A6B /* TestWebServiceView.xib */,
+			);
+			path = TestWebService;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -208,7 +222,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0830;
-				LastUpgradeCheck = 0830;
+				LastUpgradeCheck = 0940;
 				ORGANIZATIONNAME = CocoaPods;
 				TargetAttributes = {
 					607FACCF1AFB9204008FA782 = {
@@ -247,6 +261,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				607FACDB1AFB9204008FA782 /* Main.storyboard in Resources */,
+				FA61B7A920FC94E600157A6B /* TestWebServiceView.xib in Resources */,
 				607FACE01AFB9204008FA782 /* LaunchScreen.xib in Resources */,
 				607FACDD1AFB9204008FA782 /* Images.xcassets in Resources */,
 			);
@@ -351,6 +366,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FA61B7A820FC94E600157A6B /* TestWebServiceView.swift in Sources */,
 				607FACD81AFB9204008FA782 /* ViewController.swift in Sources */,
 				607FACD61AFB9204008FA782 /* AppDelegate.swift in Sources */,
 			);
@@ -406,12 +422,14 @@
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
@@ -459,12 +477,14 @@
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
