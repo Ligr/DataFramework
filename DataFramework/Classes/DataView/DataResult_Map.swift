@@ -8,7 +8,7 @@
 import Foundation
 import ReactiveSwift
 
-internal class DataResult_Map<T, U>: DataResult<U> {
+internal final class DataResult_Map<T, U>: DataResult<U> {
 
     private let map: (T) -> U
     private let dataResult: DataResult<T>
