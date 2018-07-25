@@ -1,0 +1,10 @@
+podspec = "Templater.podspec"
+
+lane :deploy do 
+	ensure_git_status_clean()
+	version = version_bump_podspec(path: podspec)
+	add_git_tag(tag: version)
+	git_commit(path: podspec, message: "Version Bump to " + version)
+	push_to_git_remote()
+	pod_push(path: podspec, allow_warnings: true, swift_version: 4.1)
+end

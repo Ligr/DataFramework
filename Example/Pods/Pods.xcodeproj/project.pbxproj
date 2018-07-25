@@ -264,6 +264,7 @@
 		FA087C7F20FCDA57000FDC5B /* DataResult_Array.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA087C7E20FCDA57000FDC5B /* DataResult_Array.swift */; };
 		FA087C8120FCDA82000FDC5B /* DataResult_Map.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA087C8020FCDA82000FDC5B /* DataResult_Map.swift */; };
 		FA087C8320FCDE22000FDC5B /* DataResult_FetchedResultsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA087C8220FCDE22000FDC5B /* DataResult_FetchedResultsController.swift */; };
+		FA179E3521021A9E00195801 /* CoreDataStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA179E3421021A9E00195801 /* CoreDataStack.swift */; };
 		FB433A84B0A557CD5E5948A8B6705024 /* DSL.h in Headers */ = {isa = PBXBuildFile; fileRef = 0B1E0B5E9911DC547489903A17E817E1 /* DSL.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		FB9C72383A5281DDCF93AE527104B95C /* CocoaAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 77D2AB874154FA498C277B5F3798448F /* CocoaAction.swift */; };
 		FC1ABA54D1F31CD3CDB6202DAC447875 /* SuiteHooks.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E2E75C6521DEFA02CEFF46BEC385326 /* SuiteHooks.swift */; };
@@ -679,6 +680,7 @@
 		FA087C7E20FCDA57000FDC5B /* DataResult_Array.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataResult_Array.swift; sourceTree = "<group>"; };
 		FA087C8020FCDA82000FDC5B /* DataResult_Map.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataResult_Map.swift; sourceTree = "<group>"; };
 		FA087C8220FCDE22000FDC5B /* DataResult_FetchedResultsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataResult_FetchedResultsController.swift; sourceTree = "<group>"; };
+		FA179E3421021A9E00195801 /* CoreDataStack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataStack.swift; sourceTree = "<group>"; };
 		FAB86632D20B018897CB7E9F2FC48061 /* NSObject+Intercepting.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = "NSObject+Intercepting.swift"; path = "ReactiveCocoa/NSObject+Intercepting.swift"; sourceTree = "<group>"; };
 		FABD749F84C090D70A405FC6456EBFE4 /* Nimble-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "Nimble-umbrella.h"; sourceTree = "<group>"; };
 		FBADA2B14608119BE6D12053A1D1CB19 /* DelegateProxy.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = DelegateProxy.swift; path = ReactiveCocoa/DelegateProxy.swift; sourceTree = "<group>"; };
@@ -1071,6 +1073,7 @@
 		9551AB79E4AE1B778D2496ACE368A11A /* DataFramework */ = {
 			isa = PBXGroup;
 			children = (
+				FA179E3321021A9100195801 /* CoreData */,
 				6FA51A708A3F66C32FCFCD36FECD46F4 /* DataFilter.swift */,
 				5CBE41819BD68FD1A2C14ECB626C9D65 /* DataSources */,
 				ABDFA3DCA3A1BF7C7318494A2FBFAEE6 /* DataView */,
@@ -1334,6 +1337,15 @@
 			);
 			name = Extensions;
 			path = DataFramework/Classes/Extensions;
+			sourceTree = "<group>";
+		};
+		FA179E3321021A9100195801 /* CoreData */ = {
+			isa = PBXGroup;
+			children = (
+				FA179E3421021A9E00195801 /* CoreDataStack.swift */,
+			);
+			name = CoreData;
+			path = DataFramework/Classes/CoreData;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -1844,6 +1856,7 @@
 				DFE22D9F9D1661383A36C2F2C991149B /* DispatchQueue+main.swift in Sources */,
 				987276C7CC278BC6381F8176C9BD65E2 /* HttpDecodableService.swift in Sources */,
 				FA087C7F20FCDA57000FDC5B /* DataResult_Array.swift in Sources */,
+				FA179E3521021A9E00195801 /* CoreDataStack.swift in Sources */,
 				FA087C7720FCD949000FDC5B /* DataView_Result.swift in Sources */,
 				B2413ED3273C88EED90E7003B775DC36 /* HttpJsonService.swift in Sources */,
 				FA087C7920FCD986000FDC5B /* DataView_Map.swift in Sources */,
