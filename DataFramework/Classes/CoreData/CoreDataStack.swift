@@ -14,7 +14,7 @@ final class CoreDataStack {
 
     public private(set) lazy var mainContext: NSManagedObjectContext = {
         let managedObjectContext = NSManagedObjectContext(concurrencyType: .mainQueueConcurrencyType)
-        managedObjectContext.parent = self.privateContext
+        managedObjectContext.persistentStoreCoordinator = self.persistentStoreCoordinator
         managedObjectContext.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
         return managedObjectContext
     }()
@@ -53,31 +53,38 @@ final class CoreDataStack {
         return persistentStoreCoordinator
     }()
 
-    init(modelName: String = "DataModel") {
+    public init(modelName: String = "DataModel") {
         self.modelName = modelName
+        NotificationCenter.default.addObserver(self, selector: #selector(managedObjectContextObjectsDidChangeNotification(_:)), name: .NSManagedObjectContextObjectsDidChange, object: nil)
+    }
+
+    deinit {
+        NotificationCenter.default.removeObserver(self)
     }
 
     public func save() {
         mainContext.performAndWait {
-            do {
-                if self.mainContext.hasChanges {
-                    try self.mainContext.save()
-                }
-            } catch {
-                let saveError = error as NSError
-                print("Unable to Save Changes of Main Managed Object Context\n\(saveError), \(saveError.localizedDescription)")
-            }
+            self.saveContext(self.mainContext)
         }
+    }
 
-        privateContext.perform {
-            do {
-                if self.privateContext.hasChanges {
-                    try self.privateContext.save()
-                }
-            } catch {
-                let saveError = error as NSError
-                print("Unable to Save Changes of Private Managed Object Context\n\(saveError), \(saveError.localizedDescription)")
+    public func performInBackground(_ action: @escaping (NSManagedObjectContext) -> Void) {
+        privateContext.perform { [weak self] in
+            guard let context = self?.privateContext else {
+                return
             }
+            action(context)
+            self?.saveContext(context)
+        }
+    }
+
+    public func performInBackgroundAndWait(_ action: @escaping (NSManagedObjectContext) -> Void) {
+        privateContext.performAndWait { [weak self] in
+            guard let context = self?.privateContext else {
+                return
+            }
+            action(context)
+            self?.saveContext(context)
         }
     }
 
@@ -90,6 +97,33 @@ private extension CoreDataStack {
         let fileManager = FileManager.default
         let documentsDirectoryURL = fileManager.urls(for: .documentDirectory, in: .userDomainMask)[0]
         return documentsDirectoryURL.appendingPathComponent(storeName)
+    }
+
+    private func saveContext(_ context: NSManagedObjectContext) {
+        do {
+            if context.hasChanges {
+                try context.save()
+            }
+        } catch {
+            let saveError = error as NSError
+            print("Unable to Save Changes of Managed Object Context\n\(saveError), \(saveError.localizedDescription)")
+        }
+    }
+
+    @objc private func managedObjectContextObjectsDidChangeNotification(_ notification: Notification) {
+        guard let sender = notification.object as? NSManagedObjectContext else {
+            return
+        }
+        if sender === privateContext {
+            if let updates = notification.userInfo?[NSUpdatedObjectsKey] as? [NSManagedObject] {
+                for object in updates {
+                    _ = try? mainContext.existingObject(with: object.objectID)
+                }
+            }
+            mainContext.mergeChanges(fromContextDidSave: notification)
+        } else if sender === mainContext {
+            privateContext.mergeChanges(fromContextDidSave: notification)
+        }
     }
 
 }
