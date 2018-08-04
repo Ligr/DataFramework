@@ -1,4 +1,4 @@
-podspec = "Templater.podspec"
+podspec = "DataFramework.podspec"
 
 lane :deploy do 
 	ensure_git_status_clean()
