@@ -18,6 +18,8 @@ public protocol DataSingleResultType {
     var state: Property<DataState> { get }
     var isLoading: Property<Bool> { get }
 
+    func reload()
+
 }
 
 public class DataSingleResult<T>: DataSingleResultType {
@@ -29,16 +31,19 @@ public class DataSingleResult<T>: DataSingleResultType {
         return state.map { $0 == .loading }
     }()
 
-    fileprivate let _item: MutableProperty<T?> = MutableProperty(nil)
+    fileprivate let _item: MutableProperty<T?>
     fileprivate let _state: MutableProperty<DataState> = MutableProperty(.none)
 
-    fileprivate init() {
+    fileprivate init(initial: T? = nil) {
+        _item = MutableProperty(initial)
         item = Property(_item)
         state = Property(_state)
     }
 
-    public static func create<E: Error>(data: SignalProducer<T, E>) -> DataSingleResult<T> {
-        return DataSingleResult_SignalProducer(data: data)
+    public func reload() { fatalError() }
+
+    public static func create<E: Error>(initial: T? = nil, data: SignalProducer<T, E>) -> DataSingleResult<T> {
+        return DataSingleResult_SignalProducer(initial: initial, data: data)
     }
 
 }
@@ -46,23 +51,32 @@ public class DataSingleResult<T>: DataSingleResultType {
 private class DataSingleResult_SignalProducer<T, E: Error>: DataSingleResult<T> {
 
     private var dataDisposable: Disposable?
+    private let data: SignalProducer<T, E>
 
-    init(data: SignalProducer<T, E>) {
+    init(initial: T? = nil, data: SignalProducer<T, E>) {
+        self.data = data
         super.init()
-        self._state.value = .loading
+    }
+
+    deinit {
+        dataDisposable?.dispose()
+    }
+
+    override func reload() {
+        guard _state.value != .loading else {
+            return
+        }
+        _state.value = .loading
         dataDisposable = data.startWithResult { [weak self] result in
             switch result {
             case .failure(let error):
                 self?._state.value = .error(error)
+                self?._item.value = nil
             case .success(let value):
                 self?._state.value = .idle
                 self?._item.value = value
             }
         }
-    }
-
-    deinit {
-        dataDisposable?.dispose()
     }
 
 }
