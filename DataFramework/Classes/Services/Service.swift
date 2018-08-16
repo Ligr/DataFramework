@@ -26,3 +26,9 @@ public protocol ServiceProtocol {
     func request(filter: FilterType) -> ResultType
 
 }
+
+public protocol HttpServiceProtocol: ServiceProtocol where ResultType == SignalProducer<DataType, ServiceError> {
+
+    associatedtype DataType
+
+}

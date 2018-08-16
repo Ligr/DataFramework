@@ -11,6 +11,6 @@ import ReactiveSwift
 
 public protocol AuthServiceProtocol {
 
-    func authRequest<Service: ServiceProtocol>(with filter: Service.FilterType, service: Service) -> Service.ResultType where Service.FilterType: HttpDataFilterProtocol
+    func authRequest<Service: HttpServiceProtocol>(with filter: Service.FilterType, service: Service) -> Service.ResultType where Service.FilterType: HttpDataFilterProtocol
 
 }

@@ -10,7 +10,7 @@ import Foundation
 import ReactiveSwift
 import Result
 
-public final class HttpDecodableService<FilterType: HttpDataFilterProtocol, DecodableType: Decodable>: ServiceProtocol {
+public final class HttpDecodableService<FilterType: HttpDataFilterProtocol, DecodableType: Decodable>: HttpServiceProtocol {
 
     public typealias DataType = HttpResponse<DecodableType>
     public typealias ResultType = SignalProducer<DataType, ServiceError>

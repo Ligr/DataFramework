@@ -9,7 +9,7 @@
 import Foundation
 import ReactiveSwift
 
-public final class HttpJsonService<FilterType: HttpDataFilterProtocol>: ServiceProtocol {
+public final class HttpJsonService<FilterType: HttpDataFilterProtocol>: HttpServiceProtocol {
 
     public typealias DataType = HttpResponse<Any>
     public typealias ResultType = SignalProducer<DataType, ServiceError>

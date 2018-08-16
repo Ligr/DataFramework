@@ -33,7 +33,7 @@ public struct HttpResponse<T> {
     public let response: URLResponse
 }
 
-public final class HttpService<FilterType: HttpDataFilterProtocol>: ServiceProtocol {
+public final class HttpService<FilterType: HttpDataFilterProtocol>: HttpServiceProtocol {
 
     public typealias DataType = HttpResponse<Data>
     public typealias ResultType = SignalProducer<DataType, ServiceError>
@@ -99,14 +99,11 @@ private extension HttpService {
         var request = URLRequest(url: url)
         switch filter.method {
         case .get:
-            request.httpMethod = "GET"
-        case .post:
+            break
+        case .post, .put, .patch:
             request.httpBody = filter.body
-            request.httpMethod = "POST"
-        case .put:
-            request.httpBody = filter.body
-            request.httpMethod = "PUT"
         }
+        request.httpMethod = filter.method.rawValue
         for (headerKey, headerValue) in filter.headerParams {
             request.setValue(headerValue, forHTTPHeaderField: headerKey)
         }
