@@ -13,9 +13,13 @@ class TestWebServiceView: UIViewController {
 
     private struct Response: Decodable {
 
-        struct Item: Decodable {
+        struct Item: Decodable, Uniq, Equatable {
             let title: String
             let details: String
+
+            var identifier: String {
+                return title
+            }
         }
 
         let data: [Item]

@@ -35,12 +35,13 @@ public struct HttpResponse<T> {
 
 public final class HttpService<FilterType: HttpDataFilterProtocol>: ServiceProtocol {
 
-    public typealias ResultType = HttpResponse<Data>
+    public typealias DataType = HttpResponse<Data>
+    public typealias ResultType = SignalProducer<DataType, ServiceError>
 
     private let baseUrl: URL
     private let urlSession: URLSession
-    private lazy var requestFactory: SignalProducerCachedFactory<FilterType, ResultType, ServiceError> = {
-        return SignalProducerCachedFactory(factory: { [unowned self] (filter) -> SignalProducer<ResultType, ServiceError> in
+    private lazy var requestFactory: SignalProducerCachedFactory<FilterType, DataType, ServiceError> = {
+        return SignalProducerCachedFactory(factory: { [unowned self] (filter) -> ResultType in
             return self.dataTask(with: filter)
         })
     }()
@@ -58,7 +59,7 @@ public final class HttpService<FilterType: HttpDataFilterProtocol>: ServiceProto
         self.urlSession = URLSession(configuration: urlSessionConfig)
     }
 
-    public func request(filter: FilterType) -> SignalProducer<ResultType, ServiceError> {
+    public func request(filter: FilterType) -> ResultType {
         return requestFactory.producer(for: filter)
     }
 
@@ -68,7 +69,7 @@ public final class HttpService<FilterType: HttpDataFilterProtocol>: ServiceProto
 
 private extension HttpService {
 
-    func dataTask(with filter: FilterType) -> SignalProducer<ResultType, ServiceError> {
+    func dataTask(with filter: FilterType) -> ResultType {
         let request = urlRequest(for: filter)
         return SignalProducer { [weak self] observer, lifetime in
             guard let strongSelf = self else {
@@ -79,7 +80,7 @@ private extension HttpService {
                 if let data = data, let response = response as? HTTPURLResponse {
                     switch response.statusCode {
                     case 200..<300:
-                        observer.send(value: HttpResponse(data: data, response: response))
+                        observer.send(value: DataType(data: data, response: response))
                         observer.sendCompleted()
                     default:
                         observer.send(error: .statusCodeInvalid(data, response))

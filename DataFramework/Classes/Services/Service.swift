@@ -23,6 +23,6 @@ public protocol ServiceProtocol {
     associatedtype FilterType: DataFilterProtocol
     associatedtype ResultType
 
-    func request(filter: FilterType) -> SignalProducer<ResultType, ServiceError>
+    func request(filter: FilterType) -> ResultType
 
 }

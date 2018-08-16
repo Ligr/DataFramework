@@ -12,7 +12,8 @@ import Result
 
 public final class HttpDecodableService<FilterType: HttpDataFilterProtocol, DecodableType: Decodable>: ServiceProtocol {
 
-    public typealias ResultType = HttpResponse<DecodableType>
+    public typealias DataType = HttpResponse<DecodableType>
+    public typealias ResultType = SignalProducer<DataType, ServiceError>
 
     private let httpService: HttpService<FilterType>
 
@@ -27,14 +28,14 @@ public final class HttpDecodableService<FilterType: HttpDataFilterProtocol, Deco
         self.httpService = HttpService(baseUrl: baseUrl)
     }
 
-    public func request(filter: FilterType) -> SignalProducer<ResultType, ServiceError> {
+    public func request(filter: FilterType) -> ResultType {
         var jsonFilter = filter
         jsonFilter.headerParams[HTTP.HeaderKey.accept] = HTTP.Accept.json
-        return httpService.request(filter: jsonFilter).flatMap(.latest) { (result) -> SignalProducer<ResultType, ServiceError> in
+        return httpService.request(filter: jsonFilter).flatMap(.latest) { (result) -> ResultType in
             do {
                 let jsonDecoder = JSONDecoder()
                 let parsedData = try jsonDecoder.decode(DecodableType.self, from: result.data)
-                return SignalProducer(value: HttpResponse(data: parsedData, response: result.response))
+                return SignalProducer(value: DataType(data: parsedData, response: result.response))
             } catch let error {
                 return SignalProducer(error: .invalidJson(error))
             }
