@@ -100,7 +100,7 @@ private extension HttpService {
         switch filter.method {
         case .get:
             break
-        case .post, .put, .patch:
+        case .post, .put, .patch, .delete:
             request.httpBody = filter.body
         }
         request.httpMethod = filter.method.rawValue
