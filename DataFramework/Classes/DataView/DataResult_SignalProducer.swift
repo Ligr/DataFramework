@@ -17,6 +17,9 @@ internal final class DataResult_SignalProducer<T: Uniq & Equatable, E: Error>: D
     private var page: Int = 1
     private let pageSize: Int
     private var finished = false
+    private var paginationSupported: Bool {
+        return pageSize < Int.max
+    }
 
     init(pageSize: Int, data: @escaping ((page: Int, pageSize: Int)) -> SignalProducer<[T], E>) {
         self.loadData = data
@@ -55,15 +58,22 @@ internal final class DataResult_SignalProducer<T: Uniq & Equatable, E: Error>: D
             case .failure(let error):
                 self._state.value = .error(error)
             case .success(let items):
-                self.page += 1
                 self.finished = items.count != self.pageSize
-                let newItems = self.data + items
+                let newItems: [T]
+                if self.paginationSupported {
+                    self.page += 1
+                    newItems = self.data + items
+                } else {
+                    newItems = items
+                }
                 let updates = DataUpdatesCalculator.calculate(old: self.data, new: newItems)
 
                 // send updates on main thread so that data will not be changed in bg while it is processed on main thread
                 DispatchQueue.doOnMain {
-                    self._state.value = .idle
+                    // notify about state change only AFTER new state was applied
+                    // WARNING! however this fix does not work with skeleton view because when dataSources are switched they already have NEW items count but then UPDATES arrive ;(
                     self.data = newItems
+                    self._state.value = .idle
                     if updates.count > 0 {
                         self.updatesObserver.send(value: updates)
                     }

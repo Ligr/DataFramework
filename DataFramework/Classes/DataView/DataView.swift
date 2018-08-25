@@ -131,4 +131,8 @@ public class DataView<T>: DataViewProtocol {
         return DataView_Result(result: data)
     }
 
+    public static var empty: DataView<T> {
+        return create(data: .empty)
+    }
+
 }
