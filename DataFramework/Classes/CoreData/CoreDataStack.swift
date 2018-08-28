@@ -111,6 +111,9 @@ private extension CoreDataStack {
     }
 
     @objc private func managedObjectContextObjectsDidChangeNotification(_ notification: Notification) {
+        // according to Apple docs (https://developer.apple.com/library/archive/releasenotes/General/WhatNewCoreData2016/ReleaseNotes.html)
+        // > NSFetchedResultsController now correctly merges changes from other context for objects it hasn’t seen in its own context
+        // so this hack may be not needed any more
         guard let sender = notification.object as? NSManagedObjectContext else {
             return
         }
