@@ -56,6 +56,7 @@ private class DataSingleResult_SignalProducer<T, E: Error>: DataSingleResult<T> 
     init(initial: T? = nil, data: SignalProducer<T, E>) {
         self.data = data
         super.init()
+        reload()
     }
 
     deinit {
@@ -68,13 +69,15 @@ private class DataSingleResult_SignalProducer<T, E: Error>: DataSingleResult<T> 
         }
         _state.value = .loading
         dataDisposable = data.startWithResult { [weak self] result in
-            switch result {
-            case .failure(let error):
-                self?._state.value = .error(error)
-                self?._item.value = nil
-            case .success(let value):
-                self?._state.value = .idle
-                self?._item.value = value
+            DispatchQueue.doOnMain {
+                switch result {
+                case .failure(let error):
+                    self?._state.value = .error(error)
+                    self?._item.value = nil
+                case .success(let value):
+                    self?._state.value = .idle
+                    self?._item.value = value
+                }
             }
         }
     }
