@@ -46,6 +46,12 @@ public class DataSingleResult<T>: DataSingleResultType {
         return DataSingleResult_SignalProducer(initial: initial, data: data)
     }
 
+    public static func create(constant: T) -> DataSingleResult<T> {
+        let result = DataSingleResult(initial: constant)
+        result._state.value = .idle
+        return result
+    }
+
 }
 
 private class DataSingleResult_SignalProducer<T, E: Error>: DataSingleResult<T> {
@@ -55,7 +61,7 @@ private class DataSingleResult_SignalProducer<T, E: Error>: DataSingleResult<T> 
 
     init(initial: T? = nil, data: SignalProducer<T, E>) {
         self.data = data
-        super.init()
+        super.init(initial: initial)
         reload()
     }
 
