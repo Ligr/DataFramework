@@ -66,6 +66,32 @@ open class HttpDataFilter: HttpDataFilterProtocol {
         self.init(path: path, method: method, requestParams: requestParams, headerParams: headerParams, body: data)
     }
 
+    public convenience init(path: String, requestParams: [String: String] = [:], headerParams: [String: String] = [:], mimeType: String = "application/octet-stream", multipartFormData: (String, Data)) {
+        // quick and dirty implementation, will be refactored in future
+        let (name, uploadData) = multipartFormData
+
+        let boundary: String = "Boundary-\(NSUUID().uuidString)"
+        var headerParams = headerParams
+        headerParams[HTTP.HeaderKey.contentType] = HTTP.ContentType.multipartFormData(boundary: boundary)
+
+        var bodyStr = "Content-Disposition: form-data; name=\"\(name)\"; filename=\"\(name)\"\r\n"
+        bodyStr += "Content-Type: \(mimeType)\r\n\r\n"
+
+        var data = Data()
+        data.append("\r\n--\(boundary)\r\n".data(using: .utf8) ?? Data())
+        data.append(bodyStr.data(using: .utf8) ?? Data())
+        data.append(uploadData)
+        data.append("\r\n--\(boundary)--\r\n".data(using: .utf8) ?? Data())
+
+        for (key, value) in requestParams {
+            data.append("--\(boundary)\r\n".data(using: .utf8)!)
+            data.append("Content-Disposition: form-data; name=\"\(key)\"\r\n\r\n".data(using: .utf8)!)
+            data.append("\(value)\r\n".data(using: .utf8)!)
+        }
+
+        self.init(path: path, method: .post, requestParams: [:], headerParams: headerParams, body: data)
+    }
+
     public var identifier: String {
         var fullString = path + "|" + method.rawValue + "|"
         fullString += requestParams.map { $0.0 + $0.1 }.joined()

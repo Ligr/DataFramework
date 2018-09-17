@@ -14,6 +14,9 @@ enum HTTP {
     struct ContentType {
         static let formUrlencoded = "application/x-www-form-urlencoded"
         static let json = "application/json"
+        static func multipartFormData(boundary: String) -> String {
+            return "multipart/form-data; boundary=\(boundary)"
+        }
     }
 
     struct Accept {
