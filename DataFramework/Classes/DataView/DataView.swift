@@ -31,7 +31,7 @@ public protocol DataViewProtocol {
     var selectedItems: Property<[IndexPath]> { get }
     var allowsMultipleSelection: Bool { get }
     func selectItem(at index: IndexPath)
-    func selectItems(at indexes: [IndexPath])
+    func setSelectedItems(indexes: [IndexPath])
     func deselectItem(at index: IndexPath)
     func resetSelection()
 
@@ -95,22 +95,11 @@ public class DataView<T>: DataViewProtocol {
         }
     }
 
-    public func selectItems(at indexes: [IndexPath]) {
-        let existingIndexes = _selectedItems.value
-        let newIndexes = indexes.filter {
-            existingIndexes.contains($0) == false
-        }
-        guard newIndexes.count > 0 else {
+    public func setSelectedItems(indexes: [IndexPath]) {
+        guard allowsMultipleSelection || indexes.count == 1 else {
             return
         }
-        guard allowsMultipleSelection || newIndexes.count == 1 else {
-            return
-        }
-        if allowsMultipleSelection {
-            _selectedItems.value.append(contentsOf: newIndexes)
-        } else {
-            _selectedItems.value = newIndexes
-        }
+        _selectedItems.value = indexes
     }
 
     public func deselectItem(at index: IndexPath) {
