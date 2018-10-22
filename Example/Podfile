@@ -7,7 +7,7 @@ target 'DataFramework_Example' do
   target 'DataFramework_Tests' do
     inherit! :search_paths
 
-    pod 'Quick', '~> 1.2.0'
-    pod 'Nimble', '~> 7.0.2'
+    pod 'Quick', '~> 1.0'
+    pod 'Nimble', '~> 7.0'
   end
 end

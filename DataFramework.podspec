@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'DataFramework'
-  s.version          = '0.1.17'
+  s.version          = '0.2.0'
   s.summary          = 'Utilities that help to load, parse and display data'
 
 # This description is used to generate tags and improve search results.
@@ -39,7 +39,7 @@ Utilities that help to load, parse and display data
   # s.public_header_files = 'Pod/Classes/**/*.h'
   # s.frameworks = 'UIKit', 'MapKit'
   # s.dependency 'AFNetworking', '~> 2.3'
-  s.dependency 'ReactiveCocoa', '~> 7.0'
-  s.dependency 'ReactiveSwift', '~> 3.0'
+  s.dependency 'ReactiveCocoa', '~> 8.0'
+  s.dependency 'ReactiveSwift', '~> 4.0'
   s.dependency 'IGListKit/Diffing', '~> 3.0'
 end
