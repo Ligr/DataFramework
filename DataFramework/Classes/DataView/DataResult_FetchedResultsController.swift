@@ -52,6 +52,10 @@ internal final class DataResult_FetchedResultsController<T: Uniq & Equatable & N
         return dataSection.numberOfObjects
     }
 
+    override var values: [T] {
+        return data.fetchedObjects ?? []
+    }
+
     override subscript(_ index: Int) -> T {
         guard let fetchedObjects = data.fetchedObjects else {
             fatalError("data is not fetched")

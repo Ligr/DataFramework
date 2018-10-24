@@ -39,6 +39,10 @@ internal final class DataResult_Array<T>: DataResult<T> {
         // do nothing
     }
 
+    override var values: [T] {
+        return data
+    }
+
     override subscript(_ index: Int) -> T {
         return data[index]
     }

@@ -41,6 +41,10 @@ internal class DataView_Result<T>: DataView<T> {
         result.loadMore()
     }
 
+    override var values: [T] {
+        return result.values
+    }
+
     override subscript(_ index: Int) -> T {
         return result[index]
     }

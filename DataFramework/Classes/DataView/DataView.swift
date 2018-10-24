@@ -35,6 +35,7 @@ public protocol DataViewProtocol {
     func deselectItem(at index: IndexPath)
     func resetSelection()
 
+    var values: [ItemType] { get }
     subscript(_ index: Int) -> ItemType { get }
     subscript(_ index: IndexPath) -> ItemType { get }
 
@@ -68,6 +69,7 @@ public class DataView<T>: DataViewProtocol {
 
     public func loadMore() { fatalError() }
 
+    public var values: [T] { fatalError() }
     public subscript(_ index: Int) -> T { fatalError() }
     public subscript(_ index: IndexPath) -> T { fatalError() }
 

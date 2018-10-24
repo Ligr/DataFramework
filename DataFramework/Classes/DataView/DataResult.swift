@@ -70,6 +70,7 @@ public protocol DataResultType {
     func loadMore()
     func map<U>(_ mapAction: @escaping (ItemType) -> U) -> DataResult<U>
 
+    var values: [ItemType] { get }
     subscript(_ index: Int) -> ItemType { get }
     subscript(_ index: IndexPath) -> ItemType { get }
 
@@ -87,6 +88,7 @@ public class DataResult<T>: DataResultType {
     public func reload() { fatalError() }
     public func loadMore() { fatalError() }
 
+    public var values: [T] { fatalError() }
     public subscript(_ index: Int) -> T { fatalError() }
     public subscript(_ index: IndexPath) -> T { fatalError() }
 

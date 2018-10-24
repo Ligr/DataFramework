@@ -98,6 +98,10 @@ internal final class DataResult_SignalProducer<T: Uniq & Equatable, E: Error>: D
         return data.count
     }
 
+    override var values: [T] {
+        return data
+    }
+
     override subscript(_ index: Int) -> T {
         return data[index]
     }

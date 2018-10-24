@@ -32,6 +32,10 @@ internal final class DataResult_Map<T, U>: DataResult<U> {
     override func reload() { dataResult.reload() }
     override func loadMore() { dataResult.loadMore() }
 
+    override var values: [U] {
+        return dataResult.values.map(map)
+    }
+
     override subscript(_ index: Int) -> U {
         return map(dataResult[index])
     }

@@ -27,6 +27,10 @@ internal class DataView_Map<T, U>: DataView<U> {
 
     override func loadMore() { dataView.loadMore() }
 
+    override var values: [U] {
+        return dataView.values.map(map)
+    }
+
     override subscript(_ index: Int) -> U {
         return map(dataView[index])
     }
