@@ -114,7 +114,10 @@ private extension HttpService {
     }
 
     func url(for filter: FilterType) -> URL {
-        var url = baseUrl.appendingPathComponent(filter.path)
+        var url = baseUrl
+        if filter.path.trimmingCharacters(in: .whitespacesAndNewlines).count > 0 {
+            url = baseUrl.appendingPathComponent(filter.path)
+        }
         if let query = urlQuery(for: filter), var urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: false) {
             urlComponents.query = query
             url = urlComponents.url ?? url
