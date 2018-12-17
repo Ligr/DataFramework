@@ -20,6 +20,21 @@ internal final class SignalProducerCachedFactory<Filter: DataFilterProtocol, Out
     }
 
     func producer(for filter: Filter) -> SignalProducer<Output, E> {
+        return SignalProducer<Output, E> { [weak self] observer, lifetime in
+            guard let strongSelf = self else {
+                observer.sendInterrupted()
+                return
+            }
+            let disposable = strongSelf.getOrCreateProducer(for: filter).start(observer)
+            lifetime += disposable
+        }
+    }
+
+}
+
+private extension SignalProducerCachedFactory {
+
+    func getOrCreateProducer(for filter: Filter) -> SignalProducer<Output, E> {
         var result: SignalProducer<Output, E> = SignalProducer.empty
         let producerIdentifier = filter.identifier
         queue.sync {
@@ -31,7 +46,7 @@ internal final class SignalProducerCachedFactory<Filter: DataFilterProtocol, Out
                         _ = self?.queue.sync {
                             self?.cache.removeValue(forKey: producerIdentifier)
                         }
-                    }).replayLazily(upTo: 1)
+                }).replayLazily(upTo: 1)
                 cache[producerIdentifier] = producer
                 result = producer
             }

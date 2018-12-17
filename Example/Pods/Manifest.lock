@@ -1,5 +1,5 @@
 PODS:
-  - DataFramework (0.2.0):
+  - DataFramework (0.2.5):
     - IGListKit/Diffing (~> 3.0)
     - ReactiveCocoa (~> 8.0)
     - ReactiveSwift (~> 4.0)
@@ -31,7 +31,7 @@ EXTERNAL SOURCES:
     :path: "../"
 
 SPEC CHECKSUMS:
-  DataFramework: fb766f18254ad0d3e3d4d59f664f36e4a817984e
+  DataFramework: 37e8b4d39a8f9264384c047aff362d6c56a8b9f1
   IGListKit: 7a5d788e9fb746bcd402baa8e8b24bc3bd2a5a07
   Nimble: 04f732da099ea4d153122aec8c2a88fd0c7219ae
   Quick: 2623cb30d7a7f41ca62f684f679586558f483d46
