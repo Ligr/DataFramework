@@ -19,6 +19,7 @@ public protocol DataSingleResultType {
     var isLoading: Property<Bool> { get }
 
     func reload()
+    func flatMap<U>(_ transform: @escaping (ItemType) -> DataResult<U>) -> DataResult<U>
 
 }
 
@@ -41,6 +42,10 @@ public class DataSingleResult<T>: DataSingleResultType {
     }
 
     public func reload() { fatalError() }
+
+    public func flatMap<U>(_ transform: @escaping (T) -> DataResult<U>) -> DataResult<U> {
+        return DataSingleResult_FlatMap(inner: self, transform: transform)
+    }
 
     public static func create<E: Error>(initial: T? = nil, data: SignalProducer<T, E>) -> DataSingleResult<T> {
         return DataSingleResult_SignalProducer(initial: initial, data: data)
