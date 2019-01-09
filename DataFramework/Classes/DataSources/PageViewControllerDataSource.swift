@@ -70,7 +70,7 @@ private final class PageViewControllerDataSource_DataView<T, V: UIViewController
 
     private func goToPage(at index: Int, animated: Bool) {
         guard let pageViewController = pageViewController, index >= 0 && index < data.count else {
-            self.pageViewController?.setViewControllers([], direction: .forward, animated: animated, completion: nil)
+            self.pageViewController?.setViewControllers([UIViewController()], direction: .forward, animated: animated, completion: nil)
             return
         }
         let item = data[index]
