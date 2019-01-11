@@ -89,7 +89,16 @@ private extension HttpService {
                         observer.send(error: .statusCodeInvalid(data, response))
                     }
                 } else {
-                    observer.send(error: .requestFailed(error))
+                    if let error = error as? NSError {
+                        switch error.code {
+                        case NSURLErrorNotConnectedToInternet where error.domain == NSURLErrorDomain:
+                            observer.send(error: .noInternetConnection(error))
+                        default:
+                            observer.send(error: .requestFailed(error))
+                        }
+                    } else {
+                        observer.send(error: .requestFailed(error))
+                    }
                 }
             }
             lifetime.observeEnded(task.cancel)

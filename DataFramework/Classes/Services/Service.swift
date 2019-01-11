@@ -16,6 +16,7 @@ public enum ServiceError: Error {
     case cancelled
     case authorizationFailed(Error?)
     case statusCodeInvalid(Data?, HTTPURLResponse)
+    case noInternetConnection(Error?)
 }
 
 public protocol ServiceProtocol {
