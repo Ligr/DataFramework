@@ -83,7 +83,7 @@ private class TableViewDataSource_DataView<T>: NSObject, UITableViewDataSource {
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        return cell(tableView, indexPath, data[indexPath.item])
+        return cell(tableView, indexPath, data[indexPath])
     }
 
 }

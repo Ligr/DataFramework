@@ -83,7 +83,7 @@ private class CollectionViewDataSource_DataView<T>: NSObject, UICollectionViewDa
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        return cell(collectionView, indexPath, data[indexPath.item])
+        return cell(collectionView, indexPath, data[indexPath])
     }
 
     func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
