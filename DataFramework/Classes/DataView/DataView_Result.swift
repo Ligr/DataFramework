@@ -9,7 +9,7 @@ import Foundation
 import ReactiveSwift
 import Result
 
-internal class DataView_Result<T>: DataView<T> {
+internal final class DataView_Result<T>: DataView<T> {
 
     private let result: DataResult<T>
 

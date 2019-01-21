@@ -59,7 +59,7 @@ public class DataSingleResult<T>: DataSingleResultType {
 
 }
 
-private class DataSingleResult_SignalProducer<T, E: Error>: DataSingleResult<T> {
+private final class DataSingleResult_SignalProducer<T, E: Error>: DataSingleResult<T> {
 
     private var dataDisposable: Disposable?
     private let data: SignalProducer<T, E>

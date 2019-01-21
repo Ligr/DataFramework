@@ -9,7 +9,7 @@ import Foundation
 import ReactiveSwift
 import Result
 
-internal class DataView_Map<T, U>: DataView<U> {
+internal final class DataView_Map<T, U>: DataView<U> {
 
     private let map: (T) -> U
     private let dataView: DataView<T>

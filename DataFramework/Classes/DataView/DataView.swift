@@ -11,7 +11,7 @@ import ReactiveSwift
 import ReactiveCocoa
 import Result
 
-public protocol DataViewProtocol {
+public protocol DataViewProtocol: class {
 
     associatedtype ItemType
 
@@ -44,12 +44,12 @@ public protocol DataViewProtocol {
 public class DataView<T>: DataViewProtocol {
 
     public var state: Property<DataState> { fatalError() }
-    public private(set) lazy var isEmptyAndLoading: Property<Bool> = {
+    public final private(set) lazy var isEmptyAndLoading: Property<Bool> = {
         return state.map { [weak self] in
             $0 == .loading && self?.count == 0
         }.skipRepeats()
     }()
-    public private(set) lazy var isEmpty: Property<Bool> = {
+    public final private(set) lazy var isEmpty: Property<Bool> = {
         let isEmpty = updates.map { [weak self] _ -> Bool in
             guard let strongSelf = self else {
                 return true
@@ -58,7 +58,7 @@ public class DataView<T>: DataViewProtocol {
         }
         return Property(initial: count == 0, then: isEmpty)
     }()
-    public private(set) lazy var isLoading: Property<Bool> = {
+    public final private(set) lazy var isLoading: Property<Bool> = {
         return state.map { $0 == .loading }
     }()
     public var updates: Signal<[DataUpdate], NoError> { fatalError() }
@@ -73,20 +73,20 @@ public class DataView<T>: DataViewProtocol {
     public subscript(_ index: Int) -> T { fatalError() }
     public subscript(_ index: IndexPath) -> T { fatalError() }
 
-    public func map<U>(_ mapAction: @escaping (T) -> U) -> DataView<U> {
+    public final func map<U>(_ mapAction: @escaping (T) -> U) -> DataView<U> {
         return DataView_Map(map: mapAction, dataView: self)
     }
 
-    public private(set) lazy var selectedItems: Property<[IndexPath]> = {
+    public final private(set) lazy var selectedItems: Property<[IndexPath]> = {
         updates.take(duringLifetimeOf: self).observeValues { [weak self] updates in
             self?.resetSelection() // TODO: update selection based on new position of objects
         }
         return Property(_selectedItems)
     }()
-    private let _selectedItems: MutableProperty<[IndexPath]> = MutableProperty([])
-    public var allowsMultipleSelection: Bool = false
+    private final let _selectedItems: MutableProperty<[IndexPath]> = MutableProperty([])
+    public final var allowsMultipleSelection: Bool = false
 
-    public func selectItem(at index: IndexPath) {
+    public final func selectItem(at index: IndexPath) {
         guard _selectedItems.value.contains(index) == false else {
             return
         }
@@ -97,21 +97,21 @@ public class DataView<T>: DataViewProtocol {
         }
     }
 
-    public func setSelectedItems(indexes: [IndexPath]) {
+    public final func setSelectedItems(indexes: [IndexPath]) {
         guard allowsMultipleSelection || indexes.count == 1 else {
             return
         }
         _selectedItems.value = indexes
     }
 
-    public func deselectItem(at index: IndexPath) {
+    public final func deselectItem(at index: IndexPath) {
         guard _selectedItems.value.contains(index) == true else {
             return
         }
         _selectedItems.value.remove(index)
     }
 
-    public func resetSelection() {
+    public final func resetSelection() {
         guard _selectedItems.value.count > 0 else {
             return
         }

@@ -102,16 +102,20 @@ public class DataResult<T>: DataResultType {
         state = Property(_state.skipRepeats())
     }
 
-    public static func create(data: [T]) -> DataResult<T> {
-        return DataResult_Array(data: data)
-    }
-
     public func map<U>(_ mapAction: @escaping (T) -> U) -> DataResult<U> {
         return DataResult_Map(map: mapAction, dataResult: self)
     }
 
+    public static func create(data: [T]) -> DataResult<T> {
+        return DataResult_Array(data: data)
+    }
+
+    public static func combine(data: [DataResult<T>]) -> DataResult<T> {
+        return DataResult_Combine(results: data)
+    }
+
     public static var empty: DataResult<T> {
-        return create(data: [])
+        return DataResult_Array(data: [])
     }
 
 }
