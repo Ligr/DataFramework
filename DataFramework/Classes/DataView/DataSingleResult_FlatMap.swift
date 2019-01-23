@@ -54,8 +54,10 @@ internal final class DataSingleResult_FlatMap<U, T>: DataResult<T> {
         mappedResultDisposable = disposable
 
         mappedResult = result
-
         disposable += _state <~ result.state
+        DispatchQueue.doOnMain {
+            self.updatesObserver.send(value: [.all])
+        }
         disposable += result.updates.observe(updatesObserver)
     }
 

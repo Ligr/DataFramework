@@ -77,13 +77,17 @@ public class DataView<T>: DataViewProtocol {
         return DataView_Map(map: mapAction, dataView: self)
     }
 
-    public final private(set) lazy var selectedItems: Property<[IndexPath]> = {
+    internal init() {
         updates.take(duringLifetimeOf: self).observeValues { [weak self] updates in
-            self?.resetSelection() // TODO: update selection based on new position of objects
+            self?.syncSelectionsWithUpdates(updates)
         }
+    }
+
+    public final private(set) lazy var selectedItems: Property<[IndexPath]> = {
         return Property(_selectedItems)
     }()
     private final let _selectedItems: MutableProperty<[IndexPath]> = MutableProperty([])
+
     public final var allowsMultipleSelection: Bool = false
 
     public final func selectItem(at index: IndexPath) {
@@ -124,6 +128,51 @@ public class DataView<T>: DataViewProtocol {
 
     public static var empty: DataView<T> {
         return create(data: .empty)
+    }
+
+}
+
+private extension DataView {
+
+    func syncSelectionsWithUpdates(_ updates: [DataUpdate]) {
+        let oldSelectedItems = _selectedItems.value
+        guard oldSelectedItems.count > 0 else {
+            return
+        }
+        var newSelectedItems = _selectedItems.value
+
+        let handleDelete: (IndexPath) -> Void = { index in
+            newSelectedItems.remove(index)
+            for selection in oldSelectedItems where selection.section == index.section {
+                if selection.item > index.item {
+                    newSelectedItems.remove(selection)
+                    newSelectedItems.append(IndexPath(item: selection.item - 1, section: selection.section))
+                }
+            }
+        }
+        let handleInsert: (IndexPath) -> Void = { index in
+            for selection in oldSelectedItems where selection.section == index.section {
+                if selection.item >= index.item {
+                    newSelectedItems.remove(selection)
+                    newSelectedItems.append(IndexPath(item: selection.item + 1, section: selection.section))
+                }
+            }
+        }
+        for update in updates {
+            switch update {
+            case .all, .update:
+                break
+            case .delete(at: let index):
+                handleDelete(index)
+            case .insert(at: let index):
+                handleInsert(index)
+            case .move(from: let fromIndex, to: let toIndex):
+                handleDelete(fromIndex)
+                handleInsert(toIndex)
+            }
+        }
+
+        _selectedItems.value = newSelectedItems
     }
 
 }
