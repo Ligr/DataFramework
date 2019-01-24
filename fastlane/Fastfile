@@ -6,5 +6,5 @@ lane :deploy do
 	git_commit(path: podspec, message: "Version Bump to " + version)
 	add_git_tag(tag: version)
 	push_to_git_remote()
-	pod_push(path: podspec, allow_warnings: true, swift_version: 4.2)
+	pod_push(path: podspec, allow_warnings: true, swift_version: "4.2")
 end
