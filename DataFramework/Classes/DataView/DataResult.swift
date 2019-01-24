@@ -54,7 +54,7 @@ public enum DataUpdate: Equatable {
     case move(from: IndexPath, to: IndexPath)
 }
 
-public protocol DataResultType {
+public protocol DataResultType: class {
 
     associatedtype ItemType
 

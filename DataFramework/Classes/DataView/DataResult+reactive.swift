@@ -1,14 +1,14 @@
 //
-//  DataView+reactive.swift
+//  DataResult+reactive.swift
 //  DataFramework
 //
-//  Created by Alex on 1/19/19.
+//  Created by Aliaksandr on 1/24/19.
 //
 
 import Foundation
 import ReactiveSwift
 
-public extension DataViewProtocol {
+public extension DataResultType {
 
     public var valuesStream: Property<[ItemType]> {
         let items = self.updates.map { [weak self] _ -> [ItemType] in
