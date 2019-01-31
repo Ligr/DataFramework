@@ -51,10 +51,14 @@ public class DataSingleResult<T>: DataSingleResultType {
         return DataSingleResult_SignalProducer(initial: initial, data: data)
     }
 
-    public static func create(constant: T) -> DataSingleResult<T> {
+    public static func create(constant: T?) -> DataSingleResult<T> {
         let result = DataSingleResult(initial: constant)
         result._state.value = .idle
         return result
+    }
+
+    public static var empty: DataSingleResult<T> {
+        return self.create(constant: nil)
     }
 
 }
