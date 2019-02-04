@@ -124,18 +124,24 @@ private extension HttpService {
 
     func url(for filter: FilterType) -> URL {
         var url = baseUrl
-        if filter.path.trimmingCharacters(in: .whitespacesAndNewlines).count > 0 {
-            url = baseUrl.appendingPathComponent(filter.path)
+        let pathUrl = URLComponents(string: filter.path)
+        if let path = pathUrl?.path, path.count > 0 {
+            url = baseUrl.appendingPathComponent(path)
         }
-        if let query = urlQuery(for: filter), var urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: false) {
-            urlComponents.query = query
-            url = urlComponents.url ?? url
+        if var urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: false) {
+            let queryItems = [urlQueryItems(for: filter), pathUrl?.queryItems].compactMap { $0 }.flatMap { $0 }
+            if queryItems.isEmpty == false {
+                urlComponents.queryItems = queryItems
+                url = urlComponents.url ?? url
+            }
         }
         return url
     }
 
-    func urlQuery(for filter: FilterType) -> String? {
-        return UrlUtils.urlQuery(with: filter.requestParams)
+    func urlQueryItems(for filter: FilterType) -> [URLQueryItem] {
+        return filter.requestParams.map {
+            URLQueryItem(name: $0, value: $1)
+        }
     }
 
 }
