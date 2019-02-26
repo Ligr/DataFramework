@@ -35,10 +35,6 @@ internal final class DataResult_SignalProducer<T: Uniq & Equatable, E: Error>: D
 
     override func reload() {
         dataDisposable?.dispose()
-        if data.isEmpty == false {
-            data = []
-            updatesObserver.send(value: [.all])
-        }
         finished = false
         _state.value = .none
         page = 1
@@ -61,8 +57,13 @@ internal final class DataResult_SignalProducer<T: Uniq & Equatable, E: Error>: D
                 self.finished = items.count != self.pageSize
                 let newItems: [T]
                 if self.paginationSupported {
+                    // if we loaded first page then we have to ignore old data (it may be not empty because user initiated reload)
+                    if self.page == 1 {
+                        newItems = items
+                    } else {
+                        newItems = self.data + items
+                    }
                     self.page += 1
-                    newItems = self.data + items
                 } else {
                     newItems = items
                 }
