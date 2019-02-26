@@ -9,15 +9,23 @@ import Foundation
 import CoreData
 import ReactiveSwift
 
-internal final class DataResult_FetchedResultsController<T: Uniq & Equatable & NSFetchRequestResult, E: Error>: DataResult<T> {
+internal final class DataResult_FetchedResultsController<T: NSFetchRequestResult, V, E: Error>: DataResult<T> {
 
     private let data: NSFetchedResultsController<T>
-    private let loadMoreData: ((page: Int, pageSize: Int)) -> SignalProducer<Void, E>
+    private let loadMoreData: ((page: Int, pageSize: Int)) -> SignalProducer<[V], E>
     private var page: Int = 1
     private let pageSize: Int
     private var finished = false
+    private var dataDisposable: Disposable?
+    private var paginationSupported: Bool {
+        return pageSize < Int.max
+    }
 
-    init(data: NSFetchedResultsController<T>, pageSize: Int, loadMore: @escaping ((page: Int, pageSize: Int)) -> SignalProducer<Void, E>) {
+    deinit {
+        dataDisposable?.dispose()
+    }
+
+    init(data: NSFetchedResultsController<T>, pageSize: Int, loadMore: @escaping ((page: Int, pageSize: Int)) -> SignalProducer<[V], E>) {
         self.data = data
         self.loadMoreData = loadMore
         self.pageSize = pageSize
@@ -26,15 +34,38 @@ internal final class DataResult_FetchedResultsController<T: Uniq & Equatable & N
     }
 
     override func reload() {
+        dataDisposable?.dispose()
+        finished = false
+        _state.value = .none
+        page = 1
+
         do {
             try data.performFetch()
         } catch let error {
             print(error)
         }
+
+        loadMore()
     }
 
     override func loadMore() {
-        // do nothing
+        guard finished == false && state.value.isError == false && state.value != .loading else {
+            return
+        }
+        self._state.value = .loading
+        let data = loadMoreData((page: page, pageSize: pageSize))
+        dataDisposable?.dispose()
+        dataDisposable = data.startWithResult { [unowned self] result in
+            switch result {
+            case .failure(let error):
+                self._state.value = .error(error)
+            case .success(let items):
+                self.finished = items.count != self.pageSize
+                if self.paginationSupported {
+                    self.page += 1
+                }
+            }
+        }
     }
 
     override var count: Int {

@@ -13,7 +13,7 @@ internal final class DataResult_SignalProducer<T: Uniq & Equatable, E: Error>: D
 
     private var data: [T] = []
     private var dataDisposable: Disposable?
-    private var loadData: ((page: Int, pageSize: Int)) -> SignalProducer<[T], E>
+    private let loadData: ((page: Int, pageSize: Int)) -> SignalProducer<[T], E>
     private var page: Int = 1
     private let pageSize: Int
     private var finished = false

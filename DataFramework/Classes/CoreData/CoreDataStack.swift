@@ -8,7 +8,7 @@
 import Foundation
 import CoreData
 
-final class CoreDataStack {
+public final class CoreDataStack {
 
     private let modelName: String
 
