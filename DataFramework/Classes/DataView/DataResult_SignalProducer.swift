@@ -70,13 +70,13 @@ internal final class DataResult_SignalProducer<T: Uniq & Equatable, E: Error>: D
                 let updates = DataUpdatesCalculator.calculate(old: self.data, new: newItems)
 
                 // send updates on main thread so that data will not be changed in bg while it is processed on main thread
-                DispatchQueue.doOnMain {
+                DispatchQueue.doOnMain { [weak self] in
                     // notify about state change only AFTER new state was applied
                     // WARNING! however this fix does not work with skeleton view because when dataSources are switched they already have NEW items count but then UPDATES arrive ;(
-                    self.data = newItems
-                    self._state.value = .idle
+                    self?.data = newItems
+                    self?._state.value = .idle
                     if updates.count > 0 {
-                        self.updatesObserver.send(value: updates)
+                        self?.updatesObserver.send(value: updates)
                     }
                 }
             }
