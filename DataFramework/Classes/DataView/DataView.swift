@@ -26,7 +26,6 @@ public protocol DataViewProtocol: class {
     func numberOfItemsInSection(_ section: Int) -> Int
 
     func loadMore()
-    func map<U>(_ mapAction: @escaping (ItemType) -> U) -> DataView<U>
 
     var selectedItems: Property<[IndexPath]> { get }
     var allowsMultipleSelection: Bool { get }
@@ -72,10 +71,6 @@ public class DataView<T>: DataViewProtocol {
     public var values: [T] { fatalError() }
     public subscript(_ index: Int) -> T { fatalError() }
     public subscript(_ index: IndexPath) -> T { fatalError() }
-
-    public final func map<U>(_ mapAction: @escaping (T) -> U) -> DataView<U> {
-        return DataView_Map(map: mapAction, dataView: self)
-    }
 
     internal init() {
         updates.take(duringLifetimeOf: self).observeValues { [weak self] updates in

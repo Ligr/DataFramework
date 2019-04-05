@@ -1,6 +1,6 @@
 {
   "name": "DataFramework",
-  "version": "0.2.18",
+  "version": "0.3.1",
   "summary": "Utilities that help to load, parse and display data",
   "description": "Utilities that help to load, parse and display data",
   "homepage": "https://github.com/Ligr/DataFramework",
@@ -13,7 +13,7 @@
   },
   "source": {
     "git": "https://github.com/Ligr/DataFramework.git",
-    "tag": "0.2.18"
+    "tag": "0.3.1"
   },
   "platforms": {
     "ios": "10.0"

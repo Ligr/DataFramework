@@ -101,7 +101,7 @@ internal final class DataResult_Combine<T>: DataResult<T> {
         let states = results.map { $0.state.producer }
         let stateProducer = SignalProducer.combineLatest(states).map { states -> DataState in
             for state in states {
-                if case .error(let error) = state {
+                if case .error = state {
                     return state
                 }
             }

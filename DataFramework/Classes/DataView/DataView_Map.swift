@@ -9,6 +9,14 @@ import Foundation
 import ReactiveSwift
 import Result
 
+extension DataView {
+
+    public final func map<U>(_ mapAction: @escaping (T) -> U) -> DataView<U> {
+        return DataView_Map(map: mapAction, dataView: self)
+    }
+
+}
+
 internal final class DataView_Map<T, U>: DataView<U> {
 
     private let map: (T) -> U
