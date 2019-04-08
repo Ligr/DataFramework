@@ -8,6 +8,14 @@
 import Foundation
 import ReactiveSwift
 
+extension DataSingleResult {
+
+    public func flatMap<U>(_ transform: @escaping (T) -> DataResult<U>) -> DataResult<U> {
+        return DataSingleResult_FlatMap(inner: self, transform: transform)
+    }
+
+}
+
 internal final class DataSingleResult_FlatMap<U, T>: DataResult<T> {
 
     private var mappedResult: DataResult<T> = .empty
@@ -24,8 +32,13 @@ internal final class DataSingleResult_FlatMap<U, T>: DataResult<T> {
         self.innerResult = inner
         super.init()
 
-        innerRresultDisposable = inner.item.producer.skipNil().startWithValues { [weak self] value in
+        let disposable = CompositeDisposable()
+        innerRresultDisposable = disposable
+        disposable += inner.item.producer.skipNil().startWithValues { [weak self] value in
             self?.setNewResult(transform(value))
+        }
+        disposable += inner.state.producer.startWithValues { [weak self] _ in
+            self?.refreshState()
         }
     }
 
@@ -54,11 +67,26 @@ internal final class DataSingleResult_FlatMap<U, T>: DataResult<T> {
         mappedResultDisposable = disposable
 
         mappedResult = result
-        disposable += _state <~ result.state
+        disposable += result.state.producer.startWithValues { [weak self] _ in
+            self?.refreshState()
+        }
         DispatchQueue.doOnMain {
             self.updatesObserver.send(value: [.all])
         }
         disposable += result.updates.observe(updatesObserver)
+    }
+
+    private func refreshState() {
+        switch (innerResult.state.value, mappedResult.state.value) {
+        case (.loading, _):
+            _state.value = .loading
+        case (.error(let error), _):
+            _state.value = .error(error)
+        case (.none, _):
+            _state.value = .none
+        case (_, .none), (_, .loading), (_, .idle), (_, .error):
+            _state.value = mappedResult.state.value
+        }
     }
 
 }
