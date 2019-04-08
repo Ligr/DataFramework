@@ -283,7 +283,7 @@
 			files = (
 			);
 			inputPaths = (
-				"${SRCROOT}/Pods/Target Support Files/Pods-DataFramework_Tests/Pods-DataFramework_Tests-frameworks.sh",
+				"${PODS_ROOT}/Target Support Files/Pods-DataFramework_Tests/Pods-DataFramework_Tests-frameworks.sh",
 				"${BUILT_PRODUCTS_DIR}/Nimble/Nimble.framework",
 				"${BUILT_PRODUCTS_DIR}/Quick/Quick.framework",
 			);
@@ -294,7 +294,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-DataFramework_Tests/Pods-DataFramework_Tests-frameworks.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-DataFramework_Tests/Pods-DataFramework_Tests-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		51E90D81C98B9D93F40539A5 /* [CP] Check Pods Manifest.lock */ = {
@@ -339,7 +339,7 @@
 			files = (
 			);
 			inputPaths = (
-				"${SRCROOT}/Pods/Target Support Files/Pods-DataFramework_Example/Pods-DataFramework_Example-frameworks.sh",
+				"${PODS_ROOT}/Target Support Files/Pods-DataFramework_Example/Pods-DataFramework_Example-frameworks.sh",
 				"${BUILT_PRODUCTS_DIR}/DataFramework/DataFramework.framework",
 				"${BUILT_PRODUCTS_DIR}/IGListKit/IGListKit.framework",
 				"${BUILT_PRODUCTS_DIR}/ReactiveCocoa/ReactiveCocoa.framework",
@@ -356,7 +356,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-DataFramework_Example/Pods-DataFramework_Example-frameworks.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-DataFramework_Example/Pods-DataFramework_Example-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
