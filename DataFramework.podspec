@@ -41,5 +41,5 @@ Utilities that help to load, parse and display data
   # s.dependency 'AFNetworking', '~> 2.3'
   s.dependency 'ReactiveCocoa', '~> 8.0'
   s.dependency 'ReactiveSwift', '~> 4.0'
-  s.dependency 'IGListKit/Diffing', '~> 3.0'
+  s.dependency 'DeepDiff', '~> 2.0'
 end

@@ -7,9 +7,9 @@
 //
 
 import Foundation
-import IGListKit
+import DeepDiff
 
-private final class ListDiffableWrapper<T: Uniq & Equatable>: ListDiffable {
+private final class ListDiffableWrapper<T: Uniq & Equatable>: DiffAware {
 
     let item: T
 
@@ -17,15 +17,12 @@ private final class ListDiffableWrapper<T: Uniq & Equatable>: ListDiffable {
         self.item = item
     }
 
-    func diffIdentifier() -> NSObjectProtocol {
-        return item.identifier as NSObjectProtocol
+    var diffId: Int {
+        return item.identifier.hashValue
     }
 
-    func isEqual(toDiffableObject object: ListDiffable?) -> Bool {
-        guard let object = object as? ListDiffableWrapper<T> else {
-            return false
-        }
-        return item == object.item
+    static func compareContent(_ a: ListDiffableWrapper<T>, _ b: ListDiffableWrapper<T>) -> Bool {
+        return a.item == b.item
     }
 
 }
@@ -33,12 +30,15 @@ private final class ListDiffableWrapper<T: Uniq & Equatable>: ListDiffable {
 struct DataUpdatesCalculator {
 
     static func calculate<T: Uniq & Equatable>(old: [T], new: [T]) -> [DataUpdate] {
-        let diff = ListDiffPaths(fromSection: 0, toSection: 0, oldArray: old.map(ListDiffableWrapper.init), newArray: new.map(ListDiffableWrapper.init), option: .equality).forBatchUpdates()
+        let wagnerFischerDiff: WagnerFischer<ListDiffableWrapper<T>> = WagnerFischer(reduceMove: false)
+
+        let changes = wagnerFischerDiff.diff(old: old.map(ListDiffableWrapper.init), new: new.map(ListDiffableWrapper.init))
         var updates = [DataUpdate]()
-        updates += diff.inserts.map { DataUpdate.insert(at: $0) }
-        updates += diff.deletes.map { DataUpdate.delete(at: $0) }
-        updates += diff.updates.map { DataUpdate.update(at: $0) }
-        updates += diff.moves.map { DataUpdate.move(from: $0.from, to: $0.to) }
+        updates += changes.compactMap { $0.insert }.map { DataUpdate.insert(at: IndexPath(item: $0.index, section: 0)) }
+        updates += changes.compactMap { $0.delete }.map { DataUpdate.delete(at: IndexPath(item: $0.index, section: 0)) }
+        updates += changes.compactMap { $0.replace }.map { DataUpdate.update(at: IndexPath(item: $0.index, section: 0)) }
+        updates += changes.compactMap { $0.move }.map { DataUpdate.move(from: IndexPath(item: $0.fromIndex, section: 0), to: IndexPath(item: $0.toIndex, section: 0)) }
+
         return updates
     }
 

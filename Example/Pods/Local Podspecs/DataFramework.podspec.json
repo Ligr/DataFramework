@@ -1,6 +1,6 @@
 {
   "name": "DataFramework",
-  "version": "0.3.3",
+  "version": "0.3.4",
   "summary": "Utilities that help to load, parse and display data",
   "description": "Utilities that help to load, parse and display data",
   "homepage": "https://github.com/Ligr/DataFramework",
@@ -13,7 +13,7 @@
   },
   "source": {
     "git": "https://github.com/Ligr/DataFramework.git",
-    "tag": "0.3.3"
+    "tag": "0.3.4"
   },
   "platforms": {
     "ios": "10.0"
@@ -26,8 +26,8 @@
     "ReactiveSwift": [
       "~> 4.0"
     ],
-    "IGListKit/Diffing": [
-      "~> 3.0"
+    "DeepDiff": [
+      "~> 2.0"
     ]
   }
 }

@@ -1,9 +1,9 @@
 PODS:
-  - DataFramework (0.3.3):
-    - IGListKit/Diffing (~> 3.0)
+  - DataFramework (0.3.4):
+    - DeepDiff (~> 2.0)
     - ReactiveCocoa (~> 8.0)
     - ReactiveSwift (~> 4.0)
-  - IGListKit/Diffing (3.4.0)
+  - DeepDiff (2.0.1)
   - Nimble (7.3.1)
   - Quick (1.3.2)
   - ReactiveCocoa (8.0.2):
@@ -19,7 +19,7 @@ DEPENDENCIES:
 
 SPEC REPOS:
   https://github.com/cocoapods/specs.git:
-    - IGListKit
+    - DeepDiff
     - Nimble
     - Quick
     - ReactiveCocoa
@@ -31,8 +31,8 @@ EXTERNAL SOURCES:
     :path: "../"
 
 SPEC CHECKSUMS:
-  DataFramework: df8ca1dffe5a6f9b28498584da263befe12248f8
-  IGListKit: 7a5d788e9fb746bcd402baa8e8b24bc3bd2a5a07
+  DataFramework: b64395a49d33a2bf189903f701ad3332bab478f6
+  DeepDiff: 1944bb2c841ab238a66b31de1faa7627f3ca84bd
   Nimble: 04f732da099ea4d153122aec8c2a88fd0c7219ae
   Quick: 2623cb30d7a7f41ca62f684f679586558f483d46
   ReactiveCocoa: fbd26e9ba60e98417ee47433e59465a98ed9da0f
