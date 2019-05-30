@@ -7,7 +7,6 @@
 
 import Foundation
 import ReactiveSwift
-import Result
 
 internal final class DataResult_Combine<T>: DataResult<T> {
 
@@ -117,7 +116,7 @@ internal final class DataResult_Combine<T>: DataResult<T> {
     }
 
     private func setupUpdates() -> Disposable? {
-        let updates = results.enumerated().map { [weak self] resultIndex, result -> Signal<[DataUpdate], NoError> in
+        let updates = results.enumerated().map { [weak self] resultIndex, result -> Signal<[DataUpdate], Never> in
             return result.updates.map { [weak self] updates -> [DataUpdate] in
                 guard let strongSelf = self else {
                     return []

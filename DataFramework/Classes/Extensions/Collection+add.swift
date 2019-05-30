@@ -16,7 +16,7 @@ public extension Array where Element: Equatable {
 
     @discardableResult
     mutating func remove(_ element: Element) -> Element? {
-        guard let index = self.index(of: element) else {
+        guard let index = self.firstIndex(of: element) else {
             return nil
         }
         return self.remove(at: index)

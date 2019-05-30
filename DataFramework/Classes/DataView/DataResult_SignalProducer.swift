@@ -7,7 +7,6 @@
 
 import Foundation
 import ReactiveSwift
-import Result
 
 internal final class DataResult_SignalProducer<T: Uniq & Equatable, E: Error>: DataResult<T> {
 

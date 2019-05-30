@@ -8,7 +8,7 @@
 import Foundation
 import ReactiveSwift
 
-public extension DataResultType {
+extension DataResultType {
 
     public var valuesStream: Property<[ItemType]> {
         let items = self.updates.map { [weak self] _ -> [ItemType] in

@@ -7,7 +7,6 @@
 
 import Foundation
 import ReactiveSwift
-import Result
 
 extension DataView {
 
@@ -28,7 +27,7 @@ internal final class DataView_Map<T, U>: DataView<U> {
     }
 
     override var state: Property<DataState> { return dataView.state }
-    override var updates: Signal<[DataUpdate], NoError> { return dataView.updates }
+    override var updates: Signal<[DataUpdate], Never> { return dataView.updates }
     override var count: Int { return dataView.count }
     override var numberOfSections: Int { return dataView.numberOfSections }
     override func numberOfItemsInSection(_ section: Int) -> Int { return dataView.numberOfItemsInSection(section) }

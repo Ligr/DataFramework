@@ -8,7 +8,6 @@
 
 import Foundation
 import ReactiveSwift
-import Result
 
 public protocol Uniq {
     var identifier: String { get }
@@ -60,7 +59,7 @@ public protocol DataResultType: class {
 
     var state: Property<DataState> { get }
 
-    var updates: Signal<[DataUpdate], NoError> { get }
+    var updates: Signal<[DataUpdate], Never> { get }
     var count: Int { get }
 
     var numberOfSections: Int { get }
@@ -79,7 +78,7 @@ public protocol DataResultType: class {
 public class DataResult<T>: DataResultType {
 
     public let state: Property<DataState>
-    public let updates: Signal<[DataUpdate], NoError>
+    public let updates: Signal<[DataUpdate], Never>
     public var count: Int { fatalError() }
 
     public var numberOfSections: Int { fatalError() }
@@ -93,10 +92,10 @@ public class DataResult<T>: DataResultType {
     public subscript(_ index: IndexPath) -> T { fatalError() }
 
     internal let _state: MutableProperty<DataState> = MutableProperty(.none)
-    internal let updatesObserver: Signal<[DataUpdate], NoError>.Observer
+    internal let updatesObserver: Signal<[DataUpdate], Never>.Observer
 
     internal init() {
-        let (updatesSignal, updatesObserver) = Signal<[DataUpdate], NoError>.pipe()
+        let (updatesSignal, updatesObserver) = Signal<[DataUpdate], Never>.pipe()
         self.updates = updatesSignal
         self.updatesObserver = updatesObserver
         state = Property(_state.skipRepeats())

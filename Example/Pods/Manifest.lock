@@ -1,16 +1,14 @@
 PODS:
-  - DataFramework (0.3.4):
+  - DataFramework (0.4.0):
     - DeepDiff (~> 2.0)
-    - ReactiveCocoa (~> 8.0)
-    - ReactiveSwift (~> 4.0)
-  - DeepDiff (2.0.1)
-  - Nimble (7.3.1)
-  - Quick (1.3.2)
-  - ReactiveCocoa (8.0.2):
-    - ReactiveSwift (~> 4.0)
-  - ReactiveSwift (4.0.0):
-    - Result (~> 4.0)
-  - Result (4.0.0)
+    - ReactiveCocoa (~> 10.0)
+    - ReactiveSwift (~> 6.0)
+  - DeepDiff (2.2.0)
+  - Nimble (7.3.4)
+  - Quick (1.3.4)
+  - ReactiveCocoa (10.0.0):
+    - ReactiveSwift (~> 6.0)
+  - ReactiveSwift (6.0.0)
 
 DEPENDENCIES:
   - DataFramework (from `../`)
@@ -24,21 +22,19 @@ SPEC REPOS:
     - Quick
     - ReactiveCocoa
     - ReactiveSwift
-    - Result
 
 EXTERNAL SOURCES:
   DataFramework:
     :path: "../"
 
 SPEC CHECKSUMS:
-  DataFramework: b64395a49d33a2bf189903f701ad3332bab478f6
-  DeepDiff: 1944bb2c841ab238a66b31de1faa7627f3ca84bd
-  Nimble: 04f732da099ea4d153122aec8c2a88fd0c7219ae
-  Quick: 2623cb30d7a7f41ca62f684f679586558f483d46
-  ReactiveCocoa: fbd26e9ba60e98417ee47433e59465a98ed9da0f
-  ReactiveSwift: a2bb9ace428a109e9c0209615645d9d286c8c433
-  Result: 7645bb3f50c2ce726dd0ff2fa7b6f42bbe6c3713
+  DataFramework: 856f3a92273479f764e4fd39633e21da51a94899
+  DeepDiff: e329bc46dd14ca788d8ec08d34420799ba1d77f2
+  Nimble: 051e3d8912d40138fa5591c78594f95fb172af37
+  Quick: f4f7f063c524394c73ed93ac70983c609805d481
+  ReactiveCocoa: 6d4c37ba236f5d9a7a55b2172cd09f19ba85f574
+  ReactiveSwift: 24b7ed245617bbfd30ee0c87779b6c64ac1b4518
 
 PODFILE CHECKSUM: 3c5d60b9942a8b0f2530b3f794de88417adb51e9
 
-COCOAPODS: 1.6.0
+COCOAPODS: 1.6.1

@@ -8,7 +8,6 @@
 
 import Foundation
 import ReactiveSwift
-import Result
 
 public final class HttpDecodableService<FilterType: HttpDataFilterProtocol, DecodableType: Decodable>: HttpServiceProtocol {
 

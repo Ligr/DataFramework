@@ -7,7 +7,6 @@
 
 import Foundation
 import ReactiveSwift
-import Result
 
 extension DataView {
 
@@ -29,7 +28,7 @@ final class DataView_Cache<T>: DataView<T> {
     }
 
     override var state: Property<DataState> { return innerDataView.state }
-    override var updates: Signal<[DataUpdate], NoError> { return innerDataView.updates }
+    override var updates: Signal<[DataUpdate], Never> { return innerDataView.updates }
     override var count: Int { return innerDataView.count }
     override var numberOfSections: Int { return innerDataView.numberOfSections }
     override func numberOfItemsInSection(_ section: Int) -> Int { return innerDataView.numberOfItemsInSection(section) }

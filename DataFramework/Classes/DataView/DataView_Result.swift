@@ -7,7 +7,6 @@
 
 import Foundation
 import ReactiveSwift
-import Result
 
 internal final class DataView_Result<T>: DataView<T> {
 
@@ -21,7 +20,7 @@ internal final class DataView_Result<T>: DataView<T> {
         return result.state
     }
 
-    override var updates: Signal<[DataUpdate], NoError> {
+    override var updates: Signal<[DataUpdate], Never> {
         return result.updates
     }
 

@@ -9,7 +9,6 @@
 import Foundation
 import ReactiveSwift
 import ReactiveCocoa
-import Result
 
 public protocol DataViewProtocol: class {
 
@@ -19,7 +18,7 @@ public protocol DataViewProtocol: class {
     var isEmptyAndLoading: Property<Bool> { get }
     var isEmpty: Property<Bool> { get }
     var isLoading: Property<Bool> { get }
-    var updates: Signal<[DataUpdate], NoError> { get }
+    var updates: Signal<[DataUpdate], Never> { get }
     var count: Int { get }
 
     var numberOfSections: Int { get }
@@ -60,7 +59,7 @@ public class DataView<T>: DataViewProtocol {
     public final private(set) lazy var isLoading: Property<Bool> = {
         return state.map { $0 == .loading }
     }()
-    public var updates: Signal<[DataUpdate], NoError> { fatalError() }
+    public var updates: Signal<[DataUpdate], Never> { fatalError() }
     public var count: Int { fatalError() }
 
     public var numberOfSections: Int { fatalError() }
