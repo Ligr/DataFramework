@@ -89,7 +89,7 @@ private extension HttpService {
                         observer.send(error: .statusCodeInvalid(data, response))
                     }
                 } else {
-                    if let error = error as? NSError {
+                    if let error = error as NSError? {
                         switch error.code {
                         case NSURLErrorNotConnectedToInternet where error.domain == NSURLErrorDomain:
                             observer.send(error: .noInternetConnection(error))
@@ -109,12 +109,7 @@ private extension HttpService {
     func urlRequest(for filter: FilterType) -> URLRequest {
         let url = self.url(for: filter)
         var request = URLRequest(url: url)
-        switch filter.method {
-        case .get:
-            break
-        case .post, .put, .patch, .delete:
-            request.httpBody = filter.body
-        }
+        request.httpBody = filter.body
         request.httpMethod = filter.method.rawValue
         for (headerKey, headerValue) in filter.headerParams {
             request.setValue(headerValue, forHTTPHeaderField: headerKey)
