@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'DataFramework'
-  s.version          = '0.2.19'
+  s.version          = '0.2.20'
   s.summary          = 'Utilities that help to load, parse and display data'
 
 # This description is used to generate tags and improve search results.
