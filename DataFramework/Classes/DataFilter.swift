@@ -48,8 +48,11 @@ open class HttpDataFilter: HttpDataFilterProtocol {
         self.body = body
     }
 
-    public convenience init<T: Encodable>(path: String, method: HttpMethod = .post, requestParams: [String: String] = [:], headerParams: [String: String] = [:], json: T) {
+    public convenience init<T: Encodable>(path: String, method: HttpMethod = .post, requestParams: [String: String] = [:], headerParams: [String: String] = [:], json: T, dateEncodingStrategy: JSONEncoder.DateEncodingStrategy? = nil) {
         let jsonEncoder = JSONEncoder()
+        if let dateEncodingStrategy = dateEncodingStrategy {
+            jsonEncoder.dateEncodingStrategy = dateEncodingStrategy
+        }
         let data = try? jsonEncoder.encode(json)
         var headerParams = headerParams
         headerParams[HTTP.HeaderKey.contentType] = HTTP.ContentType.json
