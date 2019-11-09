@@ -1,5 +1,5 @@
 PODS:
-  - DataFramework (0.4.0):
+  - DataFramework (0.4.5):
     - DeepDiff (~> 2.0)
     - ReactiveCocoa (~> 10.0)
     - ReactiveSwift (~> 6.0)
@@ -16,7 +16,7 @@ DEPENDENCIES:
   - Quick (~> 1.0)
 
 SPEC REPOS:
-  https://github.com/cocoapods/specs.git:
+  trunk:
     - DeepDiff
     - Nimble
     - Quick
@@ -28,13 +28,13 @@ EXTERNAL SOURCES:
     :path: "../"
 
 SPEC CHECKSUMS:
-  DataFramework: 856f3a92273479f764e4fd39633e21da51a94899
+  DataFramework: 326117a93da1411586a97bf40228a0d28b23cb36
   DeepDiff: e329bc46dd14ca788d8ec08d34420799ba1d77f2
   Nimble: 051e3d8912d40138fa5591c78594f95fb172af37
   Quick: f4f7f063c524394c73ed93ac70983c609805d481
   ReactiveCocoa: 6d4c37ba236f5d9a7a55b2172cd09f19ba85f574
   ReactiveSwift: 24b7ed245617bbfd30ee0c87779b6c64ac1b4518
 
-PODFILE CHECKSUM: 3c5d60b9942a8b0f2530b3f794de88417adb51e9
+PODFILE CHECKSUM: ffbe04d79a62c0882d4b031b7573a4bebede0871
 
-COCOAPODS: 1.6.1
+COCOAPODS: 1.8.4

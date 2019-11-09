@@ -1,8 +1,8 @@
 {
   "name": "DataFramework",
-  "version": "0.4.0",
+  "version": "0.4.5",
   "summary": "Utilities that help to load, parse and display data",
-  "description": "Utilities that help to load, parse and display data",
+  "source_files": "DataFramework/Classes/**/*",
   "homepage": "https://github.com/Ligr/DataFramework",
   "license": {
     "type": "MIT",
@@ -13,13 +13,8 @@
   },
   "source": {
     "git": "https://github.com/Ligr/DataFramework.git",
-    "tag": "0.4.0"
+    "tag": "0.4.5"
   },
-  "platforms": {
-    "ios": "10.0"
-  },
-  "swift_version": "5.0",
-  "source_files": "DataFramework/Classes/**/*",
   "dependencies": {
     "ReactiveCocoa": [
       "~> 10.0"
@@ -30,5 +25,11 @@
     "DeepDiff": [
       "~> 2.0"
     ]
+  },
+  "platforms": {
+    "osx": null,
+    "ios": null,
+    "tvos": null,
+    "watchos": null
   }
 }
