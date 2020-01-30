@@ -40,7 +40,7 @@ public class DataSingleResult<T>: DataSingleResultType {
         state = Property(_state)
     }
 
-    public func reload() { fatalError() }
+    public func reload() { }
 
     public static func create<E: Error>(initial: T? = nil, data: SignalProducer<T, E>) -> DataSingleResult<T> {
         return DataSingleResult_SignalProducer(initial: initial, data: data)
