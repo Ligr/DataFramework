@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name = "DataFramework"
-  s.version = "0.4.5"
+  s.version = "0.4.6"
   s.license = "MIT"
   s.summary = "Utilities that help to load, parse and display data"
   s.homepage = "https://github.com/Ligr/DataFramework"
