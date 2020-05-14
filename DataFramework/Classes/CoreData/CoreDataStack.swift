@@ -55,7 +55,7 @@ public final class CoreDataStack {
 
     public init(modelName: String = "DataModel") {
         self.modelName = modelName
-        NotificationCenter.default.addObserver(self, selector: #selector(managedObjectContextObjectsDidChangeNotification(_:)), name: .NSManagedObjectContextObjectsDidChange, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(managedObjectContextDidSaveNotification(_:)), name: .NSManagedObjectContextDidSave, object: nil)
     }
 
     deinit {
@@ -110,7 +110,7 @@ private extension CoreDataStack {
         }
     }
 
-    @objc private func managedObjectContextObjectsDidChangeNotification(_ notification: Notification) {
+    @objc private func managedObjectContextDidSaveNotification(_ notification: Notification) {
         // according to Apple docs (https://developer.apple.com/library/archive/releasenotes/General/WhatNewCoreData2016/ReleaseNotes.html)
         // > NSFetchedResultsController now correctly merges changes from other context for objects it hasn’t seen in its own context
         // so this hack may be not needed any more
@@ -118,6 +118,7 @@ private extension CoreDataStack {
             return
         }
         if sender === privateContext {
+            // I am not sure if this is needed
             if let updates = notification.userInfo?[NSUpdatedObjectsKey] as? [NSManagedObject] {
                 for object in updates {
                     _ = try? mainContext.existingObject(with: object.objectID)

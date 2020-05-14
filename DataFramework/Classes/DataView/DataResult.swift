@@ -8,6 +8,7 @@
 
 import Foundation
 import ReactiveSwift
+import CoreData
 
 public protocol Uniq {
     var identifier: String { get }
@@ -115,6 +116,14 @@ public class DataResult<T>: DataResultType {
 
     public static var empty: DataResult<T> {
         return DataResult_Array(data: [])
+    }
+
+}
+
+public extension DataResult where T: NSManagedObject {
+
+    static func create(data: NSFetchedResultsController<T>) -> DataResult<T> {
+        return DataResult_FetchedResultsController(data: data)
     }
 
 }

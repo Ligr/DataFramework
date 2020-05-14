@@ -1,71 +1,30 @@
-//
-//  DataResult_FetchedResultsController.swift
-//  DataFramework
-//
-//  Created by Aliaksandr on 7/16/18.
-//
-
 import Foundation
 import CoreData
 import ReactiveSwift
 
-internal final class DataResult_FetchedResultsController<T: NSFetchRequestResult, V, E: Error>: DataResult<T> {
+internal final class DataResult_FetchedResultsController<T: NSManagedObject>: DataResult<T> {
 
     private let data: NSFetchedResultsController<T>
-    private let loadMoreData: ((page: Int, pageSize: Int)) -> SignalProducer<[V], E>
-    private var page: Int = 1
-    private let pageSize: Int
-    private var finished = false
-    private var dataDisposable: Disposable?
-    private var paginationSupported: Bool {
-        return pageSize < Int.max
-    }
+    private let delegate = FetchedResultsControllerDelegate()
 
-    deinit {
-        dataDisposable?.dispose()
-    }
-
-    init(data: NSFetchedResultsController<T>, pageSize: Int, loadMore: @escaping ((page: Int, pageSize: Int)) -> SignalProducer<[V], E>) {
+    init(data: NSFetchedResultsController<T>) {
         self.data = data
-        self.loadMoreData = loadMore
-        self.pageSize = pageSize
         super.init()
+        data.delegate = delegate
+        updatesObserver <~ delegate.updates
         reload()
     }
 
     override func reload() {
-        dataDisposable?.dispose()
-        finished = false
-        _state.value = .none
-        page = 1
-
         do {
             try data.performFetch()
         } catch let error {
-            print(error)
+            print("[DataResult] NSFetchedResultsController fetch failed: \(error)")
         }
-
-        loadMore()
     }
 
     override func loadMore() {
-        guard finished == false && state.value.isError == false && state.value != .loading else {
-            return
-        }
-        self._state.value = .loading
-        let data = loadMoreData((page: page, pageSize: pageSize))
-        dataDisposable?.dispose()
-        dataDisposable = data.startWithResult { [unowned self] result in
-            switch result {
-            case .failure(let error):
-                self._state.value = .error(error)
-            case .success(let items):
-                self.finished = items.count != self.pageSize
-                if self.paginationSupported {
-                    self.page += 1
-                }
-            }
-        }
+
     }
 
     override var count: Int {
@@ -102,6 +61,66 @@ internal final class DataResult_FetchedResultsController<T: NSFetchRequestResult
             fatalError("object type is incorrect")
         }
         return item
+    }
+
+}
+
+private final class FetchedResultsControllerDelegate: NSObject, NSFetchedResultsControllerDelegate {
+
+    let updates: Signal<[DataUpdate], Never>
+    private let updatesObserver: Signal<[DataUpdate], Never>.Observer
+
+    private var _updates: [DataUpdate] = []
+
+    override init() {
+        (updates, updatesObserver) = Signal<[DataUpdate], Never>.pipe()
+        super.init()
+    }
+
+    func controllerWillChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
+        _updates = []
+    }
+
+    func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
+        updatesObserver.send(value: _updates)
+        _updates = []
+    }
+
+    func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChange sectionInfo: NSFetchedResultsSectionInfo, atSectionIndex sectionIndex: Int, for type: NSFetchedResultsChangeType) {
+        // TODO: support sections changes
+        _updates.append(.all)
+    }
+
+    func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChange anObject: Any, at indexPath: IndexPath?, for type: NSFetchedResultsChangeType, newIndexPath: IndexPath?) {
+        switch type {
+        case .delete:
+            guard let indexPath = indexPath else {
+                _updates.append(.all)
+                return
+            }
+            _updates.append(.delete(at: indexPath))
+        case .insert:
+            guard let newIndexPath = newIndexPath else {
+                _updates.append(.all)
+                return
+            }
+            _updates.append(.insert(at: newIndexPath))
+        case .update:
+            guard let indexPath = indexPath else {
+                _updates.append(.all)
+                return
+            }
+            _updates.append(.update(at: indexPath))
+        case .move:
+            if let indexPath = indexPath, let newIndexPath = newIndexPath {
+                _updates.append(.delete(at: indexPath))
+                _updates.append(.insert(at: newIndexPath))
+            } else {
+                _updates.append(.all)
+            }
+        @unknown default:
+            _updates.append(.all)
+        }
     }
 
 }
