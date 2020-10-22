@@ -1,7 +1,7 @@
 # DataFramework
 
-[![CI Status](https://img.shields.io/travis/Ligr/DataFramework.svg?style=flat)](https://travis-ci.org/Ligr/DataFramework)
 [![Version](https://img.shields.io/cocoapods/v/DataFramework.svg?style=flat)](https://cocoapods.org/pods/DataFramework)
+[![SwiftPM compatible](https://img.shields.io/badge/SwiftPM-compatible-orange.svg)](#swift-package-manager)
 [![License](https://img.shields.io/cocoapods/l/DataFramework.svg?style=flat)](https://cocoapods.org/pods/DataFramework)
 [![Platform](https://img.shields.io/cocoapods/p/DataFramework.svg?style=flat)](https://cocoapods.org/pods/DataFramework)
 
