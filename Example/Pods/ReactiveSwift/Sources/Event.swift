@@ -229,7 +229,7 @@ extension Signal.Event {
 		}
 	}
 
-	internal static func filterMap<U>(_ transform: @escaping (Value) -> U?) -> Transformation<U, Error> {
+	internal static func compactMap<U>(_ transform: @escaping (Value) -> U?) -> Transformation<U, Error> {
 		return { action, _ in
 			return { event in
 				switch event {
@@ -527,7 +527,7 @@ extension Signal.Event where Value: ResultProtocol, Error == Never {
 
 extension Signal.Event where Value: OptionalProtocol {
 	internal static var skipNil: Transformation<Value.Wrapped, Error> {
-		return filterMap { $0.optional }
+		return compactMap { $0.optional }
 	}
 }
 
@@ -690,23 +690,6 @@ extension Signal.Event {
 		}
 	}
 
-	internal static func scan<U>(into initialResult: U, _ nextPartialResult: @escaping (inout U, Value) -> Void) -> Transformation<U, Error> {
-		return { action, _ in
-			var accumulator = initialResult
-
-			return { event in
-				action(event.map { value in
-					nextPartialResult(&accumulator, value)
-					return accumulator
-				})
-			}
-		}
-	}
-
-	internal static func scan<U>(_ initialResult: U, _ nextPartialResult: @escaping (U, Value) -> U) -> Transformation<U, Error> {
-		return scan(into: initialResult) { $0 = nextPartialResult($0, $1) }
-	}
-
 	internal static func reduce<U>(into initialResult: U, _ nextPartialResult: @escaping (inout U, Value) -> Void) -> Transformation<U, Error> {
 		return { action, _ in
 			var accumulator = initialResult
@@ -729,6 +712,45 @@ extension Signal.Event {
 
 	internal static func reduce<U>(_ initialResult: U, _ nextPartialResult: @escaping (U, Value) -> U) -> Transformation<U, Error> {
 		return reduce(into: initialResult) { $0 = nextPartialResult($0, $1) }
+	}
+
+	internal static func scan<U>(into initialResult: U, _ nextPartialResult: @escaping (inout U, Value) -> Void) -> Transformation<U, Error> {
+		return self.scanMap(into: initialResult, { result, value -> U in
+			nextPartialResult(&result, value)
+			return result
+		})
+	}
+
+	internal static func scan<U>(_ initialResult: U, _ nextPartialResult: @escaping (U, Value) -> U) -> Transformation<U, Error> {
+		return scan(into: initialResult) { $0 = nextPartialResult($0, $1) }
+	}
+
+	internal static func scanMap<State, U>(into initialState: State, _ next: @escaping (inout State, Value) -> U) -> Transformation<U, Error> {
+		return { action, _ in
+			var accumulator = initialState
+
+			return { event in
+				switch event {
+				case let .value(value):
+					let output = next(&accumulator, value)
+					action(.value(output))
+				case .completed:
+					action(.completed)
+				case .interrupted:
+					action(.interrupted)
+				case let .failed(error):
+					action(.failed(error))
+				}
+			}
+		}
+	}
+
+	internal static func scanMap<State, U>(_ initialState: State, _ next: @escaping (State, Value) -> (State, U)) -> Transformation<U, Error> {
+		return scanMap(into: initialState) { state, value in
+			let new = next(state, value)
+			state = new.0
+			return new.1
+		}
 	}
 
 	internal static func observe(on scheduler: Scheduler) -> Transformation<Value, Error> {
@@ -870,9 +892,8 @@ extension Signal.Event {
 	internal static func debounce(_ interval: TimeInterval, on scheduler: DateScheduler, discardWhenCompleted: Bool) -> Transformation<Value, Error> {
 		precondition(interval >= 0)
 		
-		let state: Atomic<ThrottleState<Value>> = Atomic(ThrottleState(previousDate: scheduler.currentDate, pendingValue: nil))
-
 		return { action, lifetime in
+			let state: Atomic<ThrottleState<Value>> = Atomic(ThrottleState(previousDate: scheduler.currentDate, pendingValue: nil))
 			let d = SerialDisposable()
 
 			lifetime.observeEnded {
@@ -1015,17 +1036,23 @@ extension Signal.Event where Value == Never {
 	internal static func promoteValue<U>(_: U.Type) -> Transformation<U, Error> {
 		return { action, _ in
 			return { event in
-				switch event {
-				case .value:
-					fatalError("Never is impossible to construct")
-				case let .failed(error):
-					action(.failed(error))
-				case .completed:
-					action(.completed)
-				case .interrupted:
-					action(.interrupted)
-				}
+				action(event.promoteValue())
 			}
 		}
 	}
+}
+
+extension Signal.Event where Value == Never {
+	internal func promoteValue<U>() -> Signal<U, Error>.Event {
+        switch event {
+        case .value:
+            fatalError("Never is impossible to construct")
+        case let .failed(error):
+            return .failed(error)
+        case .completed:
+            return .completed
+        case .interrupted:
+            return .interrupted
+        }
+    }
 }

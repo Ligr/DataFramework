@@ -625,8 +625,19 @@ extension Signal {
 	///                returns a new optional value.
 	///
 	/// - returns: A signal that will send new values, that are non `nil` after the transformation.
+	public func compactMap<U>(_ transform: @escaping (Value) -> U?) -> Signal<U, Error> {
+		return flatMapEvent(Signal.Event.compactMap(transform))
+	}
+
+	/// Applies `transform` to values from `signal` and forwards values with non `nil` results unwrapped.
+	/// - parameters:
+	///   - transform: A closure that accepts a value from the `value` event and
+	///                returns a new optional value.
+	///
+	/// - returns: A signal that will send new values, that are non `nil` after the transformation.
+	@available(*, deprecated, renamed: "compactMap")
 	public func filterMap<U>(_ transform: @escaping (Value) -> U?) -> Signal<U, Error> {
-		return flatMapEvent(Signal.Event.filterMap(transform))
+		return flatMapEvent(Signal.Event.compactMap(transform))
 	}
 }
 
@@ -903,12 +914,12 @@ extension Signal where Value: EventProtocol, Error == Never {
 	}
 }
 
-extension Signal where Value: ResultProtocol, Error == Never {
+extension Signal where Error == Never {
 	/// Translate a signal of `Result` _values_ into a signal of those events
 	/// themselves.
 	///
 	/// - returns: A signal that sends values carried by `self` events.
-	public func dematerializeResults() -> Signal<Value.Success, Value.Failure> {
+	public func dematerializeResults<Success, Failure>() -> Signal<Success, Failure> where Value == Result<Success, Failure> {
 		return flatMapEvent(Signal.Event.dematerializeResults)
 	}
 }
@@ -1313,6 +1324,34 @@ extension Signal {
 	public func scan<U>(into initialResult: U, _ nextPartialResult: @escaping (inout U, Value) -> Void) -> Signal<U, Error> {
 		return flatMapEvent(Signal.Event.scan(into: initialResult, nextPartialResult))
 	}
+
+	/// Accumulate all values from `self` as `State`, and send the value as `U`.
+	///
+	/// - parameters:
+	///   - initialState: The state to use as the initial accumulating state.
+	///   - next: A closure that combines the accumulating state and the latest value
+	///           from `self`. The result would be "next state" and "output" where
+	///           "output" would be forwarded and "next state" would be used in the
+	///           next call of `next`.
+	///
+	/// - returns: A producer that sends the output that is computed from the accumuation.
+	public func scanMap<State, U>(_ initialState: State, _ next: @escaping (State, Value) -> (State, U)) -> Signal<U, Error> {
+		return flatMapEvent(Signal.Event.scanMap(initialState, next))
+	}
+
+	/// Accumulate all values from `self` as `State`, and send the value as `U`.
+	///
+	/// - parameters:
+	///   - initialState: The state to use as the initial accumulating state.
+	///   - next: A closure that combines the accumulating state and the latest value
+	///           from `self`. The result would be "next state" and "output" where
+	///           "output" would be forwarded and "next state" would be used in the
+	///           next call of `next`.
+	///
+	/// - returns: A producer that sends the output that is computed from the accumuation.
+	public func scanMap<State, U>(into initialState: State, _ next: @escaping (inout State, Value) -> U) -> Signal<U, Error> {
+		return flatMapEvent(Signal.Event.scanMap(into: initialState, next))
+	}
 }
 
 extension Signal where Value: Equatable {
@@ -1669,7 +1708,7 @@ extension Signal {
 					return true
 				}
 
-				_haveAllSentInitial = values.reduce(true) { $0 && !($1 is Placeholder) }
+				_haveAllSentInitial = values.allSatisfy { !($0 is Placeholder) }
 				return _haveAllSentInitial
 			}
 		}
@@ -1848,7 +1887,7 @@ extension Signal {
 			}
 
 			for (index, action) in builder.startHandlers.enumerated() where !lifetime.hasEnded {
-				lifetime += action(index, strategy) { observer.send($0.map { _ in fatalError() }) }
+				lifetime += action(index, strategy) { observer.send($0.promoteValue()) }
 			}
 		}
 	}
@@ -2159,7 +2198,17 @@ extension Signal where Value == Bool {
 	///
 	/// - returns: A signal that emits the logical AND results.
 	public func and(_ signal: Signal<Value, Error>) -> Signal<Value, Error> {
-		return self.combineLatest(with: signal).map { $0.0 && $0.1 }
+		return type(of: self).all([self, signal])
+	}
+	
+	/// Create a signal that computes a logical AND between the latest values of `booleans`.
+	///
+	/// - parameters:
+	///   - booleans: A collection of boolean signals to be combined.
+	///
+	/// - returns: A signal that emits the logical AND results.
+	public static func all<BooleansCollection: Collection>(_ booleans: BooleansCollection) -> Signal<Value, Error> where BooleansCollection.Element == Signal<Value, Error> {
+		return combineLatest(booleans).map { $0.reduce(true) { $0 && $1 } }
 	}
 
 	/// Create a signal that computes a logical OR between the latest values of `self`
@@ -2170,7 +2219,17 @@ extension Signal where Value == Bool {
 	///
 	/// - returns: A signal that emits the logical OR results.
 	public func or(_ signal: Signal<Value, Error>) -> Signal<Value, Error> {
-		return self.combineLatest(with: signal).map { $0.0 || $0.1 }
+		return type(of: self).any([self, signal])
+	}
+	
+	/// Create a signal that computes a logical OR between the latest values of `booleans`.
+	///
+	/// - parameters:
+	///   - booleans: A collection of boolean signals to be combined.
+	///
+	/// - returns: A signal that emits the logical OR results.
+	public static func any<BooleansCollection: Collection>(_ booleans: BooleansCollection) -> Signal<Value, Error> where BooleansCollection.Element == Signal<Value, Error> {
+		return combineLatest(booleans).map { $0.reduce(false) { $0 || $1 } }
 	}
 }
 

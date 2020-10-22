@@ -17,6 +17,6 @@ Pod::Spec.new do |s|
   s.source_files = "DataFramework/Classes/**/*"
 
   s.dependency "ReactiveCocoa", "~> 10.0"
-  s.dependency "ReactiveSwift", "~> 6.0"
+  s.dependency "ReactiveSwift", "~> 6.4"
   s.dependency "DeepDiff", "~> 2.0"
 end
