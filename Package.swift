@@ -22,9 +22,11 @@ let package = Package(
         // Targets can depend on other targets in this package, and on products in packages this package depends on.
         .target(
             name: "DataFramework",
-            dependencies: []),
+            dependencies: [],
+            path: "DataFramework/Classes"),
         .testTarget(
             name: "DataFramework_Tests",
-            dependencies: ["DataFramework"]),
+            dependencies: ["DataFramework"],
+            path: "Example/Tests"),
     ]
 )
