@@ -1,103 +1,38 @@
-//
-//  CoreDataStack.swift
-//  DataFramework
-//
-//  Created by Aliaksandr on 7/20/18.
-//
-
-import Foundation
 import CoreData
+import Foundation
 
 public final class CoreDataStack {
 
+    // MARK: - Properties
+    // MARK: Public
+
+    public var mainContext: NSManagedObjectContext {
+        persistentContainer.viewContext
+    }
+
+    // MARK: Private
+
+    private let persistentContainer: NSPersistentContainer
     private let modelName: String
 
-    public private(set) lazy var mainContext: NSManagedObjectContext = {
-        let managedObjectContext = NSManagedObjectContext(concurrencyType: .mainQueueConcurrencyType)
-        managedObjectContext.persistentStoreCoordinator = self.persistentStoreCoordinator
-        managedObjectContext.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
-        return managedObjectContext
-    }()
-
-    private lazy var privateContext: NSManagedObjectContext = {
-        let managedObjectContext = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
-        managedObjectContext.persistentStoreCoordinator = self.persistentStoreCoordinator
-        managedObjectContext.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
-        return managedObjectContext
-    }()
-
-    private lazy var managedObjectModel: NSManagedObjectModel? = {
-        guard let modelURL = Bundle.main.url(forResource: self.modelName, withExtension: "momd") else {
-            return nil
-        }
-        let managedObjectModel = NSManagedObjectModel(contentsOf: modelURL)
-        return managedObjectModel
-    }()
-
-    private lazy var persistentStoreCoordinator: NSPersistentStoreCoordinator? = {
-        guard let managedObjectModel = self.managedObjectModel else {
-            return nil
-        }
-        let persistentStoreURL = self.persistentStoreURL
-        let persistentStoreCoordinator = NSPersistentStoreCoordinator(managedObjectModel: managedObjectModel)
-
-        do {
-            let options = [ NSMigratePersistentStoresAutomaticallyOption : true, NSInferMappingModelAutomaticallyOption : true ]
-            try persistentStoreCoordinator.addPersistentStore(ofType: NSSQLiteStoreType, configurationName: nil, at: persistentStoreURL, options: options)
-
-        } catch {
-            let addPersistentStoreError = error as NSError
-            print("Unable to Add Persistent Store\n\(addPersistentStoreError.localizedDescription)")
-        }
-
-        return persistentStoreCoordinator
-    }()
+    // MARK: - Initializers
 
     public init(modelName: String = "DataModel") {
         self.modelName = modelName
-        NotificationCenter.default.addObserver(self, selector: #selector(managedObjectContextDidSaveNotification(_:)), name: .NSManagedObjectContextDidSave, object: nil)
+        self.persistentContainer = Self.persistentContainer(modelName)
     }
 
-    deinit {
-        NotificationCenter.default.removeObserver(self)
-    }
-
-    public func save() {
-        mainContext.performAndWait {
-            self.saveContext(self.mainContext)
-        }
-    }
+    // MARK: - API
 
     public func performInBackground(_ action: @escaping (NSManagedObjectContext) -> Void) {
-        privateContext.perform { [weak self] in
-            guard let context = self?.privateContext else {
-                return
-            }
+        persistentContainer.performBackgroundTask { [weak self] context in
             action(context)
             self?.saveContext(context)
         }
     }
-
-    public func performInBackgroundAndWait(_ action: @escaping (NSManagedObjectContext) -> Void) {
-        privateContext.performAndWait { [weak self] in
-            guard let context = self?.privateContext else {
-                return
-            }
-            action(context)
-            self?.saveContext(context)
-        }
-    }
-
 }
 
 private extension CoreDataStack {
-
-    private var persistentStoreURL: URL {
-        let storeName = "\(modelName).sqlite"
-        let fileManager = FileManager.default
-        let documentsDirectoryURL = fileManager.urls(for: .documentDirectory, in: .userDomainMask)[0]
-        return documentsDirectoryURL.appendingPathComponent(storeName)
-    }
 
     private func saveContext(_ context: NSManagedObjectContext) {
         do {
@@ -110,24 +45,36 @@ private extension CoreDataStack {
         }
     }
 
-    @objc private func managedObjectContextDidSaveNotification(_ notification: Notification) {
-        // according to Apple docs (https://developer.apple.com/library/archive/releasenotes/General/WhatNewCoreData2016/ReleaseNotes.html)
-        // > NSFetchedResultsController now correctly merges changes from other context for objects it hasn’t seen in its own context
-        // so this hack may be not needed any more
-        guard let sender = notification.object as? NSManagedObjectContext else {
-            return
-        }
-        if sender === privateContext {
-            // I am not sure if this is needed
-            if let updates = notification.userInfo?[NSUpdatedObjectsKey] as? [NSManagedObject] {
-                for object in updates {
-                    _ = try? mainContext.existingObject(with: object.objectID)
-                }
-            }
-            mainContext.mergeChanges(fromContextDidSave: notification)
-        } else if sender === mainContext {
-            privateContext.mergeChanges(fromContextDidSave: notification)
-        }
+    private static func persistentStoreURL(_ name: String) -> URL {
+        let storeName = "\(name).sqlite"
+        let fileManager = FileManager.default
+        let documentsDirectoryURL = fileManager.urls(for: .documentDirectory, in: .userDomainMask)[0]
+        return documentsDirectoryURL.appendingPathComponent(storeName)
     }
 
+    private static func managedObjectModel(_ name: String) -> NSManagedObjectModel {
+        guard let modelURL = Bundle.main.url(forResource: name, withExtension: "momd") else {
+            fatalError()
+        }
+        let managedObjectModel = NSManagedObjectModel(contentsOf: modelURL)
+        return managedObjectModel!
+    }
+
+    private static func persistentContainer(_ name: String) -> NSPersistentContainer {
+        let storeDescription = NSPersistentStoreDescription(url: persistentStoreURL(name))
+        storeDescription.type = NSSQLiteStoreType
+        storeDescription.shouldMigrateStoreAutomatically = true
+
+        let container = NSPersistentContainer(name: name, managedObjectModel: Self.managedObjectModel(name))
+        container.persistentStoreDescriptions = [storeDescription]
+
+        container.loadPersistentStores(completionHandler: { _, error in
+            if let error = error as NSError? {
+                fatalError("Unresolved error \(error), \(error.userInfo)")
+            }
+        })
+        container.viewContext.automaticallyMergesChangesFromParent = true
+
+        return container
+    }
 }
