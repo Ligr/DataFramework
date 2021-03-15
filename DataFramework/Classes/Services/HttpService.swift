@@ -103,7 +103,9 @@ private extension HttpService {
             }
             lifetime.observeEnded(task.cancel)
             task.resume()
-        }
+        }.on(failed: { error in
+            DataFramework.httpErrorsPrivate.input.send(value: error)
+        })
     }
 
     func urlRequest(for filter: FilterType) -> URLRequest {
