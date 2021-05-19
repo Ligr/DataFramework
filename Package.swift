@@ -12,7 +12,7 @@ let package = Package(
             targets: ["DataFramework"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/onmyway133/DeepDiff.git", from: "2.0.0"),
+        .package(url: "https://github.com/onmyway133/DeepDiff.git", from: "3.0.0"),
         .package(url: "https://github.com/ReactiveCocoa/ReactiveCocoa.git", from: "11.0.0")
     ],
     targets: [
